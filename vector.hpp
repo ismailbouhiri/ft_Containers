@@ -6,7 +6,7 @@
 /*   By: ibouhiri <ibouhiri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/12 11:30:18 by ibouhiri          #+#    #+#             */
-/*   Updated: 2021/10/15 12:34:04 by ibouhiri         ###   ########.fr       */
+/*   Updated: 2021/10/15 18:10:12 by ibouhiri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,18 +50,45 @@ namespace ft
         {
             if (this->MyCapacity)
             {
-                this->array = MyAllocator.allocate(this->MyCapacity);
-                for (size_type acc; acc < this->Mysize; acc++)
+                this->array = MyAllocator.allocate(this->MyCapacity + 1);
+                for (size_type acc = 0; acc < this->Mysize; acc++)
                     this->array[acc] = val;
+                this->array[this->MyCapacity] = nullptr; 
+            }
+            else {
+                this->array = nullptr;
             }
         }
         template <class InputIterator>
-        vector (InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type());
-        vector (const vector& x);
+        vector (InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type()) : MySize(0)
+        {
+            this->MyCapacity = last - first;
+            if (this->MyCapacity)
+            {
+                this->array = MyAllocator.allocate(this->MyCapacity + 1);
+                for (InputIterator it = first; it != last; it++)
+                    this->array.pushback(*it);
+                this->array[this->MyCapacity] = nullptr;
+            }
+            else {
+                this->array = nullptr;
+            }
+        }
+        vector (const vector& x)
+        { 
+            this->array = x;
+        };
         //Destrutor
-        ~vector();
+        ~vector()
+        {
+            if (this->MyCapacity)
+                this->MyAllocator.deallocate(this->array, this->MyCapacity);
+        }
         //EgalOperator
-        vector& operator= (const vector& x);
+        vector& operator= (const vector& x)
+        {
+            
+        }
         // eterator 
         iterator begin();
         const_iterator begin() const;
@@ -73,10 +100,16 @@ namespace ft
         const_reverse_iterator rend() const;
         
         // Capacity
-        size_type size() const;
+        size_type size() const
+        {
+            return this->MySize;
+        }
+        size_type capacity() const
+        {
+            return this->MyCapacity;
+        }
         size_type max_size() const;
         void resize (size_type n, value_type val = value_type());
-        size_type capacity() const;
         bool empty() const;
         void reserve (size_type n);
 
@@ -94,7 +127,24 @@ namespace ft
         template <class InputIterator>
         void assign (InputIterator first, InputIterator last);
         void assign (size_type n, const value_type& val);
-        void push_back (const value_type& val);
+        void push_back (const value_type& val)
+        {
+            if (this->MyCapacity > this->MySize)
+            {
+                this->MySize += 1;
+                this->array[this->MySize] = val;
+            }
+            else
+            {
+                T *temp = this->array;
+                this->MyCapacity += 1;
+                this->MySize = this->MyCapacity;
+                this->array = this->MyAllocator.allocate(this->MyCapacity + 1);
+                for(type_size acc = 0; acc < this->MyCapacity; acc++)
+                    this->array[acc] = temp[acc];
+                this->array[this->MySize] = nullptr;
+            }
+        }
         void pop_back();
         iterator insert (iterator position, const value_type& val);	
         void insert (iterator position, size_type n, const value_type& val);	
