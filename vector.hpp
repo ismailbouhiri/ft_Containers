@@ -6,7 +6,7 @@
 /*   By: ibouhiri <ibouhiri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/12 11:30:18 by ibouhiri          #+#    #+#             */
-/*   Updated: 2021/10/16 11:36:36 by ibouhiri         ###   ########.fr       */
+/*   Updated: 2021/10/16 12:27:28 by ibouhiri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ namespace ft
         {
             if (this->_MyCapacity)
             {
-                this->_array = _MyAllocator.allocate(this->_MyCapacity);
+                this->_array = this->_MyAllocator.allocate(this->_MyCapacity);
                 for (size_type acc = 0; acc < this->_Mysize; acc++)
                     this->_array[acc] = val;
             }
@@ -61,16 +61,14 @@ namespace ft
         template <class InputIterator>
         vector (InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type()) : _Mysize(0)
         {
+            std::cout << "hello first" << std::endl;
             this->_MyCapacity = last - first;
+            this->_Mysize = _MyCapacity;
             if (this->_MyCapacity)
             {
-                this->_array = _MyAllocator.allocate(this->_MyCapacity);
-                size_type acc = 0;
-                while (first != last)
-                {
-                    
-                }
-                
+                this->_array = this->_MyAllocator.allocate(this->_MyCapacity);
+                for (size_type acc = 0; acc < this->_Mysize; acc++)
+                    this->_array[acc] = *(first++);
             }
             else {
                 this->_array = nullptr;
@@ -78,7 +76,7 @@ namespace ft
         };
         vector (const vector& x)
         { 
-            this->_array = x;
+            *this = x;
         };
         //Destrutor
         ~vector()
@@ -114,17 +112,17 @@ namespace ft
         // const_reverse_iterator rend() const;
         
         // Capacity
-        size_type size() const
+        size_type size() const { return this->_Mysize; };
+        size_type capacity() const { return this->_MyCapacity; };
+        bool empty() const
         {
-            return this->_Mysize;
-        }
-        size_type capacity() const
-        {
-            return this->_MyCapacity;
-        }
+            if (this->Mysize)
+                return true;
+            else 
+                return false;
+        };
         // size_type max_size() const;
         // void resize (size_type n, value_type val = value_type());
-        // bool empty() const;
         // void reserve (size_type n);
 
         // // element access 

@@ -1,14 +1,21 @@
 # include <iostream>
 #include "vector.hpp"
+#include <vector>
 int main(void)
 {
     // constructors used in the same order as described above:
-    ft::vector<int> first;                                // empty vector of ints
-    ft::vector<int> second (4,100);                      // four ints with value 100
+    std::vector<int> first;                         // empty vector of ints
+    std::vector<int> second (4,100);                      // four ints with value 100
+    std::cout << first.size() << std::endl;
+    std::cout << first.capacity() << std::endl;
 
+    std::cout << " f second capacity : " << second.capacity() << std::endl;
+    std::cout << "f second size : " <<  second.size() << std::endl;
     second.push_back(5);
+    std::cout << "second capacity : " << second.capacity() << std::endl;
+    std::cout << "second size : " <<  second.size() << std::endl;
     // std::vector<int> third (second.begin(),second.end());  // iterating through second
-    // std::vector<int> fourth (third);                       // a copy of third
+    // ft::vector<int> fourth (second);                       // a copy of third
     // double size = second.end() - second.begin();
     
     // std::cout << "iterator end :: " << second.begin() << std::endl;
