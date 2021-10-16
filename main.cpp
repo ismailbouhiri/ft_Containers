@@ -1,38 +1,24 @@
 # include <iostream>
-#include "vector.hpp"
+// #include "vector.hpp"
 #include <vector>
 int main(void)
 {
-    // constructors used in the same order as described above:
-    std::vector<int> first;                         // empty vector of ints
-    std::vector<int> second (4,100);                      // four ints with value 100
-    std::cout << first.size() << std::endl;
-    std::cout << first.capacity() << std::endl;
+    std::vector<int> foo (3,100);   // three ints with a value of 100
+    std::vector<int> bar (5,200);   // five ints with a value of 200
 
-    std::cout << " f second capacity : " << second.capacity() << std::endl;
-    std::cout << "f second size : " <<  second.size() << std::endl;
-    second.push_back(5);
-    std::cout << "second capacity : " << second.capacity() << std::endl;
-    std::cout << "second size : " <<  second.size() << std::endl;
-    // std::vector<int> third (second.begin(),second.end());  // iterating through second
-    // ft::vector<int> fourth (second);                       // a copy of third
-    // double size = second.end() - second.begin();
-    
-    // std::cout << "iterator end :: " << second.begin() << std::endl;
-    // std::cout << "iterator begin :: " << second.end() << std::endl;
-    // // the iterator constructor can also be used to construct from arrays:
-    // int myints[] = {16,2,77,29};
-    // std::vector<int> fifth (myints, myints + sizeof(myints) / sizeof(int) );
+    foo.swap(bar);
 
-    // std::cout << "The contents of fifth are:";
-    // for (std::vector<int>::iterator it = fifth.begin(); it != fifth.end(); ++it)
-    //     std::cout << ' ' << *it;
-    // std::cout << '\n';
-        
-    // std::vector<int> test(4, 100);
-    // std::cout << "capacity  ::  " << test.capacity() << std::endl;
-    // std::cout << "size  ::  " << test.size() << std::endl;
-    // std::cout << second.empty() << std::endl;
+    std::cout << "foo contains:";
+    for (unsigned i=0; i<foo.size(); i++)
+        std::cout << ' ' << foo[i];
+    std::cout << '\n';
+    std::cout << "foo size : " << foo.size() << " foo capacity : " << foo.capacity() << std::endl;
+
+    std::cout << "bar contains:";
+    for (unsigned i=0; i<bar.size(); i++)
+        std::cout << ' ' << bar[i];
+    std::cout << '\n';
+    std::cout << "bar size : " << bar.size() << " bar capacity : " << bar.capacity() << std::endl;
 
     return 0;
 }

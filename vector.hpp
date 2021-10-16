@@ -6,7 +6,7 @@
 /*   By: ibouhiri <ibouhiri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/12 11:30:18 by ibouhiri          #+#    #+#             */
-/*   Updated: 2021/10/16 12:27:28 by ibouhiri         ###   ########.fr       */
+/*   Updated: 2021/10/16 21:34:50 by ibouhiri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,12 +32,12 @@ namespace ft
         typedef typename allocator_type::difference_type     difference_type;
         typedef typename allocator_type::pointer             pointer;
         typedef typename allocator_type::const_pointer       const_pointer;
-        // typedef ft::reverse_iterator<std::iterator>           reverse_iterator;
-        // typedef ft::reverse_iterator<std::const_iterator>     const_reverse_iterator;
+        typedef ft::reverse_iterator<iterator>             reverse_iterator;
+        typedef ft::reverse_iterator<const_iterator>       const_reverse_iterator;
 
         private :
          // private thinks
-            T               *_array;
+            value_type      *_array;
             size_type       _MyCapacity;
             size_type       _Mysize;
             allocator_type  _MyAllocator;
@@ -61,7 +61,6 @@ namespace ft
         template <class InputIterator>
         vector (InputIterator first, InputIterator last, const allocator_type& alloc = allocator_type()) : _Mysize(0)
         {
-            std::cout << "hello first" << std::endl;
             this->_MyCapacity = last - first;
             this->_Mysize = _MyCapacity;
             if (this->_MyCapacity)
@@ -102,14 +101,14 @@ namespace ft
         };
 
         // eterator 
-        // iterator begin();
-        // const_iterator begin() const;
-        // iterator end();
-        // const_iterator end() const;
-        // reverse_iterator rbegin();
-        // const_reverse_iterator rbegin() const;
-        // reverse_iterator rend();
-        // const_reverse_iterator rend() const;
+        iterator begin();
+        const_iterator begin() const;
+        iterator end();
+        const_iterator end() const;
+        reverse_iterator rbegin();
+        const_reverse_iterator rbegin() const;
+        reverse_iterator rend();
+        const_reverse_iterator rend() const;
         
         // Capacity
         size_type size() const { return this->_Mysize; };
@@ -121,24 +120,41 @@ namespace ft
             else 
                 return false;
         };
-        // size_type max_size() const;
-        // void resize (size_type n, value_type val = value_type());
-        // void reserve (size_type n);
+        size_type max_size() const;
+        void resize (size_type n, value_type val = value_type());
+        void reserve (size_type n);
 
         // // element access 
-        // reference operator[] (size_type n);
-        // const_reference operator[] (size_type n) const;
-        // reference at (size_type n);
-        // const_reference at (size_type n) const;
-        // reference front();
-        // const_reference front() const;
-        // reference back();
-        // const_reference back() const;
+        reference operator[] (size_type n);
+        const_reference operator[] (size_type n) const;
+        reference at (size_type n);
+        const_reference at (size_type n) const;
+        reference front();
+        const_reference front() const;
+        reference back();
+        const_reference back() const;
 
         // // modifiers
-        // template <class InputIterator>
-        // void assign (InputIterator first, InputIterator last);
-        // void assign (size_type n, const value_type& val);
+        template <class InputIterator>
+        void assign (InputIterator first, InputIterator last)
+        {
+            this->_MyAllocator.deallocate(this->_array, this->_MyCapacity);
+            size_type n = last - fisrt;
+            this->_MyCapacity = (n > this->_MyCapacity) ? n : this->_MyCapacity;
+            this->_Mysize = n;
+            this->_array = this->_MyAllocator.allocate(this->_MyCapacity);
+            for(size_type acc = 0; acc < n; acc++)
+                this->_array[acc] = *(first++);
+        };
+        void assign (size_type n, const value_type& val)
+        {
+            this->_MyAllocator.deallocate(this->_array, this->_MyCapacity);      
+            this->_MyCapacity = (n > this->_MyCapacity) ? n : this->_MyCapacity;
+            this->_Mysize = n;
+            this->_array = this->_MyAllocator.allocate(this->_MyCapacity);
+            for(size_type acc = 0; acc < n; acc++)
+                this->_array[acc] = val;
+        };
         void push_back (const value_type& val)
         {
             if (this->_MyCapacity > this->_Mysize)
@@ -148,26 +164,39 @@ namespace ft
             }
             else
             {
-                T *temp = this->_array;
-                this->_MyCapacity += 1;
-                this->_Mysize = this->_MyCapacity;
+                value_type *temp = this->_array;
+                this->_MyCapacity *= 2;
+                if (this->_MyCapacity == 0)
+                    this->_MyCapacity++;
+                this->_Mysize += 1;
                 this->_array = this->_MyAllocator.allocate(this->_MyCapacity);
-                for(size_type acc = 0; acc < this->_MyCapacity; acc++)
+                for(size_type acc = 0; acc < this->_Mysize; acc++)
                     this->_array[acc] = temp[acc];
+                size_type dec /= (this->_MyCapacity > 1) ? 2 : 1;
+                this->_MyAllocator.deallocate(temp, dec);
             }
         }
-        // void pop_back();
-        // iterator insert (iterator position, const value_type& val);	
-        // void insert (iterator position, size_type n, const value_type& val);	
-        // template <class InputIterator>
-        // void insert (iterator position, InputIterator first, InputIterator last);
-        // iterator erase (iterator position);
-        // iterator erase (iterator first, iterator last);
-        // void swap (vector& x);
-        // void clear();
+        void pop_back(void)
+        {
+            this->_MyAllocator.destroy(this->_array + this->_Mysize);
+            this->_Mysize--;
+        };
+        iterator insert (iterator position, const value_type& val){};
+        void insert (iterator position, size_type n, const value_type& val){};
+        template <class InputIterator>
+        void insert (iterator position, InputIterator first, InputIterator last);
+        iterator erase (iterator position);
+        iterator erase (iterator first, iterator last);
+        void swap (vector& x) {
+            
+            
+        };
+        void clear(void) {
+            
+        };
         
         // Allocator
-        // allocator_type get_allocator() const;
+        allocator_type get_allocator() const;
 
     };
     // non-member fonctions
@@ -177,7 +206,7 @@ namespace ft
     template <class T, class Alloc>
     bool operator!= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs);
     template <class T, class Alloc>
-    bool operator<  (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs);
+    bool operator<  (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs);  
     template <class T, class Alloc>
     bool operator<= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs);
     template <class T, class Alloc>
