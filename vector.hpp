@@ -6,7 +6,7 @@
 /*   By: ibouhiri <ibouhiri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/12 11:30:18 by ibouhiri          #+#    #+#             */
-/*   Updated: 2021/10/16 21:34:50 by ibouhiri         ###   ########.fr       */
+/*   Updated: 2021/10/17 12:20:55 by ibouhiri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include <iostream>
 #include <memory>
 #include <vector>
+# include "iterators.hpp"
             
 namespace ft
 {   
@@ -24,16 +25,18 @@ namespace ft
     {
         public :
         // typedefs
-        typedef T                                            value_type;
-        typedef Alloc                                        allocator_type;
-        typedef typename allocator_type::reference           reference;
-        typedef typename allocator_type::const_reference     const_reference;
-        typedef typename allocator_type::size_type           size_type;
+        typedef T                                            value_type;            
+        typedef Alloc                                        allocator_type;         
+        typedef typename allocator_type::reference           reference;             
+        typedef typename allocator_type::const_reference     const_reference;       
+        typedef typename allocator_type::size_type           size_type;             
         typedef typename allocator_type::difference_type     difference_type;
-        typedef typename allocator_type::pointer             pointer;
-        typedef typename allocator_type::const_pointer       const_pointer;
-        typedef ft::reverse_iterator<iterator>             reverse_iterator;
-        typedef ft::reverse_iterator<const_iterator>       const_reverse_iterator;
+        typedef typename allocator_type::pointer             pointer;               
+        typedef typename allocator_type::const_pointer       const_pointer;         
+        typedef ft::Myiterator<value_type>                   iterator               
+        typedef ft::Myiterator<const value_type>             const_iterator         
+        typedef ft::reverse_iterator<iterator>               reverse_iterator;      
+        typedef ft::reverse_iterator<const_iterator>         const_reverse_iterator;            
 
         private :
          // private thinks
@@ -124,7 +127,7 @@ namespace ft
         void resize (size_type n, value_type val = value_type());
         void reserve (size_type n);
 
-        // // element access 
+        // // element access
         reference operator[] (size_type n);
         const_reference operator[] (size_type n) const;
         reference at (size_type n);
@@ -165,15 +168,16 @@ namespace ft
             else
             {
                 value_type *temp = this->_array;
+                size_type dec = this->_MyCapacity;
                 this->_MyCapacity *= 2;
-                if (this->_MyCapacity == 0)
+                if (!this->_MyCapacity)
                     this->_MyCapacity++;
                 this->_Mysize += 1;
                 this->_array = this->_MyAllocator.allocate(this->_MyCapacity);
                 for(size_type acc = 0; acc < this->_Mysize; acc++)
                     this->_array[acc] = temp[acc];
-                size_type dec /= (this->_MyCapacity > 1) ? 2 : 1;
-                this->_MyAllocator.deallocate(temp, dec);
+                if (dec)
+                    this->_MyAllocator.deallocate(temp, dec);
             }
         }
         void pop_back(void)
