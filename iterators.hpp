@@ -6,7 +6,7 @@
 /*   By: ibouhiri <ibouhiri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/17 10:40:51 by ibouhiri          #+#    #+#             */
-/*   Updated: 2021/10/17 16:43:43 by ibouhiri         ###   ########.fr       */
+/*   Updated: 2021/10/18 15:53:14 by ibouhiri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,32 +17,73 @@
 namespace ft{
 
 	template<class T>
-	class Myiterator : public std::iterator<random_access_iterator_tag, T>
+	class iterator : public std::iterator<random_access_iterator_tag, T>
 	{
 		private :
-			T	*_Pointer;
+			pointer	_Pointer;
 		public :
+			iterator(void) : _Pointer(nullptr) {};
+			iterator(const iterator& it) { *this = it } ;
+			~iterator(void);
+			iterator& operator=(const iterator& it){ this->_Pointer = it._Pointer; };
+
+			bool operator==(const iterator& it) const { return this->_Pointer == it._Pointer};
+			bool operator!=(const iterator& it) const { return this->_Pointer != it._Pointer};
+
+			reference	operator*(void) const { return *_Pointer; };
+			pointer		operator->(void) const { return _Pointer; };
+			iterator	&operator++(void) { iterator old = this; _Pointer++; return old; };
+			iterator 	&operator--(void) { iterator old = this; _Pointer--; return old; };
+			iterator 	operator++(int) { _Pointer++; return this; };
+			iterator 	operator--(int) { _Pointer--; return this; };
+
+			iterator	&operator+(int n) { _Pointer = _Pointer + n; return this; };
+			iterator	&operator-(int n) { _Pointer = _Pointer - n; return this; };
+
+			iterator	&operator+=(int n) { _Pointer + n; return this; };
+			iterator	&operator-=(int n) { _Pointer - n; return this; };
+
+			difference_type operator-(const iterator& it) { return this->_Pointer - it._Pointer; };
+
+			bool operator<(const iterator& it) const { return _Pointer < it._Pointer };
+			bool operator>(const iterator& it) const { return _Pointer > it._Pointer };
+			bool operator<=(const iterator& it) const { return _Pointer <= it._Pointer };
+			bool operator>=(const iterator& it) const { return _Pointer >= it._Pointer };
+			
+			reference operator[](const int& index) const {return _Pointer[index]}
+	};
+
+	iterator	&operator-(const int& n, iterator& it) { return it + n; };
+
+	template <class Iterator> 
+	class iterator_traits
+	{
+		typedef typename Iterator::difference_type	 difference_type;
+		typedef typename Iterator::value_type		 value_type;
+		typedef typename Iterator::pointer			 pointer;
+		typedef typename Iterator::reference		 reference;
+		typedef typename Iterator::iterator_category iterator_category;
 		
-			Myiterator(void) : _Pointer(nullptr) {};
-			Myiterator(const Myiterator& it) { *this = it } ;
-			~Myiterator(void);
-			Myiterator& operator=(const Myiterator& it){ this->_Pointer = it._Pointer; };
-			
-			bool operator==(const Myiterator& it) const { return it._Pointer == this->_Pointer };
-			bool operator!=(const Myiterator& it) const { return it._Pointer != this->_Pointer };
-			
-			reference operator*(void) const { return *_Pointer; };
-			pointer operator->(void) const { return _Pointer; };
-			
-			Myiterator operator++(void)
-			{
-				this->_Pointer++;
-				return *this;
-			}
-			
-			
-			
-			
+	};
+	
+	template <class T>
+	class iterator_traits<T*>
+	{
+		typedef ptrdiff_t		 					     difference_type;
+		typedef T	 		     					     value_type;
+		typedef T*		     						     pointer;
+		typedef T&		         					     reference;
+		typedef random_access_iterator_tag               iterator_category;
+	};
+	
+	template <class T>
+	class iterator_traits<const T*>
+	{
+		typedef ptrdiff_t		 					     difference_type;
+		typedef T	 		     					     value_type;
+		typedef const T*		     					 pointer;
+		typedef const T&		         			 	 reference;
+		typedef random_access_iterator_tag               iterator_category;
 	};
 }
 
