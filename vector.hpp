@@ -6,7 +6,7 @@
 /*   By: ibouhiri <ibouhiri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/12 11:30:18 by ibouhiri          #+#    #+#             */
-/*   Updated: 2021/10/18 11:55:10 by ibouhiri         ###   ########.fr       */
+/*   Updated: 2021/10/19 15:53:03 by ibouhiri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,14 +33,14 @@ namespace ft
         typedef typename allocator_type::difference_type     difference_type;
         typedef typename allocator_type::pointer             pointer;               
         typedef typename allocator_type::const_pointer       const_pointer;         
-        typedef ft::iterator<value_type>                     iterator               
-        typedef ft::iterator<const value_type>               const_iterator         
+        typedef ft::iterator<value_type>                     iterator;               
+        typedef ft::iterator<const value_type>               const_iterator;         
         typedef ft::reverse_iterator<iterator>               reverse_iterator;      
         typedef ft::reverse_iterator<const_iterator>         const_reverse_iterator;            
 
         private :
          // private thinks
-            value_type      *_array;
+            pointer         _array;
             size_type       _MyCapacity;
             size_type       _Mysize;
             allocator_type  _MyAllocator;
@@ -128,21 +128,21 @@ namespace ft
         void reserve (size_type n);
 
         // // element access
-        reference operator[] (size_type n);
-        const_reference operator[] (size_type n) const;
-        reference at (size_type n);
-        const_reference at (size_type n) const;
-        reference front();
-        const_reference front() const;
-        reference back();
-        const_reference back() const;
+        reference operator[] (size_type n) { return this->_array[n]; };
+        const_reference operator[] (size_type n) const { return this->_array[n]; };
+        reference at (size_type n)  { return (n > _Mysize) ? throw std::out_of_range("this element n is out of range") : _array[n]; };
+        const_reference at (size_type n) const { return (n > _Mysize) ? throw std::out_of_range("this element n is out of range") : _array[n]; };
+        reference front() { return _array[0]; };
+        const_reference front() const { return _array[0]; };
+        reference back() { return _array + _Mysize; };
+        const_reference back() const { return _array + _Mysize; };
 
         // // modifiers
         template <class InputIterator>
         void assign (InputIterator first, InputIterator last)
         {
             this->_MyAllocator.deallocate(this->_array, this->_MyCapacity);
-            size_type n = last - fisrt;
+            size_type n = last - first;
             this->_MyCapacity = (n > this->_MyCapacity) ? n : this->_MyCapacity;
             this->_Mysize = n;
             this->_array = this->_MyAllocator.allocate(this->_MyCapacity);
@@ -160,24 +160,30 @@ namespace ft
         };
         void push_back (const value_type& val)
         {
-            if (this->_MyCapacity > this->_Mysize)
+            if (this->_MyCapacity == 0)
             {
+                this->_MyCapacity += 1;
                 this->_Mysize += 1;
+                this->_array = this->_MyAllocator.allocate(1);
+                this->_array[0] = val;
+            }
+            else if (this->_MyCapacity > this->_Mysize)
+            {
                 this->_array[this->_Mysize] = val;
+                this->_Mysize += 1;
             }
             else
             {
-                value_type *temp = this->_array;
-                size_type dec = this->_MyCapacity;
+                pointer tmp_array;
+                size_type tmp_capacity = this->_MyCapacity;
                 this->_MyCapacity *= 2;
-                if (!this->_MyCapacity)
-                    this->_MyCapacity++;
+                tmp_array = this->_MyAllocator.allocate(_MyCapacity);
+                for (size_type i = 0; i < _Mysize; i++)
+                    tmp_array[i] = this->_array[i];
+                tmp_array[_Mysize] = val;
+                this->_MyAllocator.deallocate(_array, tmp_capacity);
                 this->_Mysize += 1;
-                this->_array = this->_MyAllocator.allocate(this->_MyCapacity);
-                for(size_type acc = 0; acc < this->_Mysize; acc++)
-                    this->_array[acc] = temp[acc];
-                if (dec)
-                    this->_MyAllocator.deallocate(temp, dec);
+                this->_array = tmp_array;
             }
         }
         void pop_back(void)

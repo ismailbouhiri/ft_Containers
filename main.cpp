@@ -1,24 +1,30 @@
 # include <iostream>
-// #include "vector.hpp"
+#include "vector.hpp"
 #include <vector>
-int main(void)
+int main ()
 {
-    std::vector<int> foo (3,100);   // three ints with a value of 100
-    std::vector<int> bar (5,200);   // five ints with a value of 200
+  std::vector<int> therevector;
+  ft::vector<int> myvector;
+  int myint;
+  // ft::vector<int>::iterator it;
+  // std::cout << "Please enter some integers (enter 0 to end):\n";
+  // therevector.push_back(15);
+  // std::cout << therevector.at(15) << std::endl;
+  
+  myvector.push_back(15);
+  std::cout << myvector.at(15) << std::endl;
+  
+  // int i = 0;
+  // do {
+  //   std::cin >> myint;
+  //   myvector.push_back (myint);
+  //   std::cout << "myvecteur[" << i << "] = " << myvector[i] << std::endl;
+  //   i++;
+  // } while (myint);
+  // for (int i = 0; i < myvector.size() ; i++)
+  //   std::cout << "myvecteur[" << i << "] = " << myvector[i] << std::endl;
+  std::cout << "myvector stores " << int(myvector.size()) << " numbers.\n";
+  std::cout << "myvector capacity " << int(myvector.capacity()) << " numbers.\n";
 
-    foo.swap(bar);
-
-    std::cout << "foo contains:";
-    for (unsigned i=0; i<foo.size(); i++)
-        std::cout << ' ' << foo[i];
-    std::cout << '\n';
-    std::cout << "foo size : " << foo.size() << " foo capacity : " << foo.capacity() << std::endl;
-
-    std::cout << "bar contains:";
-    for (unsigned i=0; i<bar.size(); i++)
-        std::cout << ' ' << bar[i];
-    std::cout << '\n';
-    std::cout << "bar size : " << bar.size() << " bar capacity : " << bar.capacity() << std::endl;
-
-    return 0;
+  return 0;
 }
