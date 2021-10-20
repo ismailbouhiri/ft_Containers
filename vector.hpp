@@ -6,7 +6,7 @@
 /*   By: ibouhiri <ibouhiri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/12 11:30:18 by ibouhiri          #+#    #+#             */
-/*   Updated: 2021/10/19 15:53:03 by ibouhiri         ###   ########.fr       */
+/*   Updated: 2021/10/20 12:20:03 by ibouhiri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ namespace ft
         explicit vector (const allocator_type& alloc = allocator_type())
                     : _array(nullptr), _MyCapacity(0), _Mysize(0) {};
         explicit vector (size_type n, const value_type& val = value_type(),
-                const allocator_type& alloc = allocator_type()) : _MyCapacity(n), _Mysize(n)
+                const allocator_type& alloc = allocator_type()) : _MyCapacity(n), _Mysize(n), _MyAllocator(alloc)
         {
             if (this->_MyCapacity)
             {
@@ -104,10 +104,10 @@ namespace ft
         };
 
         // eterator 
-        iterator begin();
-        const_iterator begin() const;
-        iterator end();
-        const_iterator end() const;
+        iterator begin( void ) { iterator it(_array); return it; };
+        const_iterator begin( void ) const  { const_iterator it(_array); return it; };;
+        iterator end( void ) { iterator it(_array + _Mysize ); return it; };
+        const_iterator end() const { const_iterator it(_array + _Mysize ); return it; };;
         reverse_iterator rbegin();
         const_reverse_iterator rbegin() const;
         reverse_iterator rend();
@@ -116,13 +116,8 @@ namespace ft
         // Capacity
         size_type size() const { return this->_Mysize; };
         size_type capacity() const { return this->_MyCapacity; };
-        bool empty() const
-        {
-            if (this->Mysize)
-                return true;
-            else 
-                return false;
-        };
+        bool empty() const { return _Mysize; };
+        
         size_type max_size() const;
         void resize (size_type n, value_type val = value_type());
         void reserve (size_type n);
@@ -134,8 +129,8 @@ namespace ft
         const_reference at (size_type n) const { return (n > _Mysize) ? throw std::out_of_range("this element n is out of range") : _array[n]; };
         reference front() { return _array[0]; };
         const_reference front() const { return _array[0]; };
-        reference back() { return _array + _Mysize; };
-        const_reference back() const { return _array + _Mysize; };
+        reference back() { return _array[_Mysize - 1]; };
+        const_reference back() const { return _array[_Mysize - 1]; };
 
         // // modifiers
         template <class InputIterator>

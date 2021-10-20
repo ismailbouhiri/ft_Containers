@@ -27,25 +27,26 @@ namespace ft {
 			pointer	_Pointer;
 		public :
 			iterator(void) : _Pointer(nullptr) {};
+			iterator(pointer ptr) : _Pointer(ptr) {};
 			iterator(const iterator& it) { *this = it; } ;
-			~iterator(void);
-			iterator& operator=(const iterator& it){ this->_Pointer = it._Pointer; };
+			~iterator(void){};
+			iterator& operator=(const iterator& it){ this->_Pointer = it._Pointer; return *this; };
 
 			bool operator==(const iterator& it) const { return this->_Pointer == it._Pointer; };
 			bool operator!=(const iterator& it) const { return this->_Pointer != it._Pointer; };
 
 			reference	operator*(void) const { return *_Pointer; };
 			pointer		operator->(void) const { return _Pointer; };
-			iterator	&operator++(void) { iterator old = this; _Pointer++; return old; };
-			iterator 	&operator--(void) { iterator old = this; _Pointer--; return old; };
-			iterator 	operator++(int) { _Pointer++; return this; };
-			iterator 	operator--(int) { _Pointer--; return this; };
+			iterator	&operator++(void) { iterator *old = this; _Pointer++; return *old; };
+			iterator 	&operator--(void) { iterator *old = this; _Pointer--; return *old; };
+			iterator 	operator++(int) { _Pointer++; return *this; };
+			iterator 	operator--(int) { _Pointer--; return *this; };
 
-			iterator	&operator+(int n) { _Pointer = _Pointer + n; return this; };
-			iterator	&operator-(int n) { _Pointer = _Pointer - n; return this; };
+			iterator	&operator+(int n) { _Pointer = _Pointer + n; return *this; };
+			iterator	&operator-(int n) { _Pointer = _Pointer - n; return *this; };
 
-			iterator	&operator+=(int n) { _Pointer + n; return this; };
-			iterator	&operator-=(int n) { _Pointer - n; return this; };
+			iterator	&operator+=(int n) { _Pointer + n; return *this; };
+			iterator	&operator-=(int n) { _Pointer - n; return *this; };
 
 			difference_type operator-(const iterator& it) { return this->_Pointer - it._Pointer; };
 
