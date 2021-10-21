@@ -73,7 +73,7 @@ int main ()
   ft::vector<int> myvector(2,100);
   ft::vector<int> myvector1(2,200);
   ft::vector<int>::iterator ft_it;
-  std::vector<int> therevector(2,100);
+  std::vector<int> therevector(2,300);
   std::vector<int> therevector1(2,200);
   std::vector<int>::iterator std_it;
   
@@ -82,7 +82,7 @@ int main ()
 
   myvector.insert ( ft_it  , 15 ,200 ); 
   therevector.insert ( std_it  , 15,200 );
-
+  myvector.swap(myvector1);
   // therevector.insert (std_it,therevector1.begin(),therevector1.end());
   // myvector.insert (ft_it,myvector1.begin(),myvector1.end());
 

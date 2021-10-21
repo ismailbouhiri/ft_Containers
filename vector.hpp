@@ -6,7 +6,7 @@
 /*   By: ibouhiri <ibouhiri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/12 11:30:18 by ibouhiri          #+#    #+#             */
-/*   Updated: 2021/10/21 20:28:46 by ibouhiri         ###   ########.fr       */
+/*   Updated: 2021/10/21 20:40:09 by ibouhiri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,7 @@ namespace ft
             else {
                 this->_array = nullptr;
             }
+            return *this;
         };
         // eterator 
         iterator begin( void ) { iterator it(_array); return it; };
@@ -355,10 +356,16 @@ namespace ft
                 }
             }     
         }
-        iterator erase (iterator position);
-        iterator erase (iterator first, iterator last);
-        void swap (vector& x) {};
+        iterator erase (iterator position)
+        {};
+        iterator erase (iterator first, iterator last)
+        {};
         void clear(void) {};
+        void swap (vector& x) {
+            vector<T,Alloc> save(x);
+            x = *this;
+            *this = save;
+        };
         
         // Allocator
         allocator_type get_allocator() const { return _MyAllocator; };
@@ -378,7 +385,12 @@ namespace ft
     template <class T, class Alloc>
     bool operator>= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) { return lhs._array >= rhs._array; };
     template <class T, class Alloc>
-    void swap (vector<T,Alloc>& x, vector<T,Alloc>& y);
+    void swap (vector<T,Alloc>& x, vector<T,Alloc>& y)
+    {
+        vector<T,Alloc> save(x);
+        x = y;
+        y = save;
+    };
     
 }
 #endif
