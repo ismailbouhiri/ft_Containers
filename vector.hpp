@@ -6,7 +6,7 @@
 /*   By: ibouhiri <ibouhiri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/12 11:30:18 by ibouhiri          #+#    #+#             */
-/*   Updated: 2021/10/22 17:18:48 by ibouhiri         ###   ########.fr       */
+/*   Updated: 2021/10/22 18:18:30 by ibouhiri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ namespace ft
         public :
         //Constructors
         explicit vector (const allocator_type& alloc = allocator_type())
-                    : _array(nullptr), _MyCapacity(0), _Mysize(0) {};
+                    : _array(nullptr), _MyCapacity(0), _Mysize(0), _MyAllocator(alloc) {};
         explicit vector (size_type n, const value_type& val = value_type(),
                 const allocator_type& alloc = allocator_type()) : _MyCapacity(n), _Mysize(n), _MyAllocator(alloc)
         {
@@ -66,6 +66,7 @@ namespace ft
         typename std::enable_if<!std::is_integral<InputIterator>::value, InputIterator>::type* t = 0, 
         const allocator_type& alloc = allocator_type()) : _Mysize(0), _MyAllocator(alloc)
         {
+            t = 0;
             this->_MyCapacity = last - first;
             this->_Mysize = _MyCapacity;
             if (this->_MyCapacity)
@@ -169,6 +170,7 @@ namespace ft
         void assign (InputIterator first, InputIterator last,
                     typename std::enable_if<!std::is_integral<InputIterator>::value, InputIterator>::type* t = 0)
         {
+            t = 0;
             this->_MyAllocator.deallocate(this->_array, this->_MyCapacity);
             size_type n = last - first;
             this->_MyCapacity = (n > this->_MyCapacity) ? n : this->_MyCapacity;
@@ -310,6 +312,7 @@ namespace ft
         void insert (iterator position, InputIterator first, InputIterator last,
                 typename std::enable_if<!std::is_integral<InputIterator>::value, InputIterator>::type* t = 0)
         {
+            t = 0;
             size_type n = last - first;
             if (_MyCapacity == _Mysize || _MyCapacity < (_Mysize + n))
             {
