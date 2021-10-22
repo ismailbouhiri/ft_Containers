@@ -70,21 +70,6 @@ int main ()
   // for (int i=0; i < myvector.size(); i++)
   //   std::cout << ' ' << myvector[i];
   // std::cout << std::endl;
-  ft::vector<int> myvector(2,100);
-  ft::vector<int> myvector1(2,200);
-  ft::vector<int>::iterator ft_it;
-  std::vector<int> therevector(2,300);
-  std::vector<int> therevector1(2,200);
-  std::vector<int>::iterator std_it;
-  
-  ft_it = myvector.begin();
-  std_it = therevector.begin();
-
-  myvector.insert ( ft_it  , 15 ,200 ); 
-  therevector.insert ( std_it  , 15,200 );
-  myvector.swap(myvector1);
-  // therevector.insert (std_it,therevector1.begin(),therevector1.end());
-  // myvector.insert (ft_it,myvector1.begin(),myvector1.end());
 
   // // // "it" no longer valid, get a new one:
   // it = myvector.begin();
@@ -94,6 +79,35 @@ int main ()
   
   // int myarray [] = { 501,502,503 };
   // myvector.insert (myvector.begin(), myarray, myarray+3);
+
+  ft::vector<int> myvector(2,100);
+  std::vector<int> therevector(2,100);
+  ft::vector<int>::const_iterator ft_it = myvector.begin();
+  std::vector<int>::const_iterator std_it = therevector.begin();
+
+  // ft::vector<int> myvector1(2,200);
+  // std::vector<int> therevector1(2,200);
+
+  // ft::vector<int> myvector2(2,300);
+  // std::vector<int> therevector2(2,300);
+
+  
+  // myvector.insert ( ft_it  , myvector1.begin(),myvector1.end()); 
+  // therevector.insert ( std_it  ,therevector1.begin(),therevector1.end() );
+
+  // ft_it = myvector.begin();
+  // std_it = therevector.begin();
+  // therevector.insert (std_it,therevector2.begin(),therevector2.end());
+  // myvector.insert (ft_it,myvector2.begin(),myvector2.end());
+    
+
+  // std_it = therevector.erase(therevector.begin() + 2, therevector.begin() + 4);
+  // std::cout << " std_it = " << *std_it << std::endl;
+  // ft_it = myvector.erase(myvector.begin() + 2, myvector.begin() + 4);
+  // std::cout << " ft_it = " << *ft_it << std::endl;
+
+
+
   std::cout << "------------------------------" << std::endl;
   std::cout << "    ::  dyalhoum ::   " << std::endl;
   std::cout << "------------------------------" << std::endl;
@@ -112,6 +126,27 @@ int main ()
   for (ft_it = myvector.begin(); ft_it < myvector.end(); ft_it++)
     std::cout << ' ' << *ft_it;
   std::cout << '\n';
+  // std::vector<int> foo (5,100);   // three ints with a value of 100
+  // std::vector<int> bar (2,100);   // two ints with a value of 200
+  // ft::vector<int> myfoo (5,100);   // three ints with a value of 100
+  // ft::vector<int> mybar (2,100);   // two ints with a value of 200
+  // if (foo==bar) std::cout << "foo and bar are equal\n";
+  // if (foo!=bar) std::cout << "foo and bar are not equal\n";
+  // if (foo< bar) std::cout << "foo is less than bar\n";
+  // if (foo> bar) std::cout << "foo is greater than bar\n";
+  // if (foo<=bar) std::cout << "foo is less than or equal to bar\n";
+  // if (foo>=bar) std::cout << "foo is greater than or equal to bar\n";
+
+  // std::cout << "------------------------------" << std::endl;
+  // std::cout << "       :: dyali ::    " << std::endl;
+  // std::cout << "------------------------------" << std::endl;
+  // if (myfoo==mybar) std::cout << "myfoo and mybar are equal\n";
+  // if (myfoo!=mybar) std::cout << "myfoo and mybar are not equal\n";
+  // if (myfoo< mybar) std::cout << "myfoo is less than mybar\n";
+  // if (myfoo> mybar) std::cout << "myfoo is greater than mybar\n";
+  // if (myfoo<=mybar) std::cout << "myfoo is less than or equal to mybar\n";
+  // if (myfoo>=mybar) std::cout << "myfoo is greater than or equal to bar\n";
+
 
   return 0;
 }

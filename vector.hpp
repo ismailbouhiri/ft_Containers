@@ -6,7 +6,7 @@
 /*   By: ibouhiri <ibouhiri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/12 11:30:18 by ibouhiri          #+#    #+#             */
-/*   Updated: 2021/10/21 20:40:09 by ibouhiri         ###   ########.fr       */
+/*   Updated: 2021/10/22 17:18:48 by ibouhiri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -269,7 +269,7 @@ namespace ft
                 size_type alloc_size = (_MyCapacity * 2 < _Mysize) ? _Mysize : _MyCapacity * 2;
                 pointer tmp_array = _MyAllocator.allocate(alloc_size);
                 for (size_type i = 0; i < _Mysize; i++)
-                    if (position == _array + i)
+                    if (position == (_array + i))
                     {
                         sign = 1;
                         for (size_type acc = 0; acc < n; acc++ )
@@ -316,16 +316,19 @@ namespace ft
                 _Mysize += n;
                 _MyCapacity = (!_MyCapacity) ?  n / 2 : _MyCapacity;
                 size_type sign = 0;
-                size_type alloc_size = (_MyCapacity * 2 < _Mysize) ? _Mysize : _MyCapacity * 2;
+                size_type alloc_size = ((_MyCapacity * 2) < _Mysize) ? _Mysize : _MyCapacity * 2;
                 pointer tmp_array = _MyAllocator.allocate(alloc_size);
                 if (!tmp_array)
                     throw std::bad_alloc();
                 for (size_type i = 0; i < _Mysize; i++)
-                    if (position == _array + i)
+                    if (position == (_array + i))
                     {
                         sign = 1;
                         for (size_type acc = 0; acc < n; acc++ )
-                            tmp_array[i++] = *(first++);
+                        {
+                            tmp_array[i++] = *first;
+                            first = (first + 1 != last) ? first++: first ;    
+                        }
                         i--;
                     }
                     else
@@ -357,10 +360,56 @@ namespace ft
             }     
         }
         iterator erase (iterator position)
-        {};
+        {
+            value_type save;
+            for (size_type i = 0; i < _Mysize ; i++)
+            {
+                if (position == _array + i)
+                {
+                    iterator it(_array + (i + 1));
+                    for (size_type acc = i; acc < _Mysize ; acc++ )
+                    {
+                        _MyAllocator.destroy(_array + acc);
+                        _array[acc] = ((acc + 1) < _Mysize) ? _array[acc + 1] : _array[acc];
+                    }
+                    _Mysize--;
+                    return it;
+                }
+            }
+            return position;
+        };
         iterator erase (iterator first, iterator last)
-        {};
-        void clear(void) {};
+        {            
+            value_type save;
+            for (size_type i = 0; i < _Mysize ; i++)
+            {
+                if (first == (_array + i))
+                {
+                    size_type n = last - first;
+                    size_type j = i;
+                    for (size_type acc = i; acc < _Mysize  ; acc++ )
+                    {
+                        while ((acc - i) < n)
+                        {
+                            _MyAllocator.destroy(_array + acc);
+                            acc += 1;
+                        }
+                        _array[j++] = _array[acc];
+                    }
+                    _Mysize -= n;
+                    iterator it(_array + i);
+                    return it;
+                }
+            }
+            return first;
+        };
+        void clear(void) {
+            while (_Mysize)
+            {
+                _Mysize--;
+                _MyAllocator.destroy(_array + _Mysize);
+            }
+        };
         void swap (vector& x) {
             vector<T,Alloc> save(x);
             x = *this;
@@ -371,26 +420,52 @@ namespace ft
         allocator_type get_allocator() const { return _MyAllocator; };
 
     };
+    
     // non-member fonctions
     template <class T, class Alloc>
-    bool operator== (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) { return lhs._array == rhs._array; };
-    template <class T, class Alloc>
-    bool operator!= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) { return lhs._array != rhs._array; };
-    template <class T, class Alloc>
-    bool operator<  (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) { return lhs._array < rhs._array; }; 
-    template <class T, class Alloc>
-    bool operator<= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) { return lhs._array <= rhs._array; };
-    template <class T, class Alloc>
-    bool operator>  (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) { return lhs._array > rhs._array; };
-    template <class T, class Alloc>
-    bool operator>= (const vector<T,Alloc>& lhs, const vector<T,Alloc>& rhs) { return lhs._array >= rhs._array; };
-    template <class T, class Alloc>
-    void swap (vector<T,Alloc>& x, vector<T,Alloc>& y)
-    {
-        vector<T,Alloc> save(x);
-        x = y;
-        y = save;
+    bool operator== (const vector<T,Alloc>& left, const vector<T,Alloc>& right)  {
+        size_t left_size = left.size();
+        size_t right_size = right.size();
+        if (left_size == right_size)
+        {
+            for (size_t i = 0; i < left_size; i++)
+                if (left[i] != right[i])
+                    return false;
+            return true;   
+        }
+        return false;
     };
+	
+    template <class T, class Alloc>
+	bool operator!=(const vector<T,Alloc>& left, const vector<T,Alloc>& right) { return !(left == right); }
+	
+    template <class T, class Alloc>
+	bool operator<(const vector<T,Alloc>& left, const vector<T,Alloc>& right)
+	{
+        size_t left_size = left.size();
+        size_t right_size = right.size();
+        if (left_size < right_size)
+        {
+            for (size_t i = 0; i < left_size; i++)
+                if (left[i] > right[i])
+                    return false;
+            return true;   
+        }
+        return false;
+    }
+	
+    template <class T, class Alloc>
+    bool operator<=(const vector<T,Alloc>& left, const vector<T,Alloc>& right) { return !(right < left); }
+    
+    template <class T, class Alloc>
+	bool operator>(const vector<T,Alloc>& left, const vector<T,Alloc>& right) { return right < left; }
+	
+    template <class T, class Alloc>
+	bool operator>=(const vector<T,Alloc>& left, const vector<T,Alloc>& right) { return !(left < right); }
+    
+    
+    template <class T, class Alloc>
+    void swap (vector<T,Alloc>& x, vector<T,Alloc>& y) { vector<T,Alloc> save(x); x = y; y = save; };
     
 }
 #endif

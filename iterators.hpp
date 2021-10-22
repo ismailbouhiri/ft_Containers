@@ -19,7 +19,7 @@ namespace ft {
 	template<class T>
 	class iterator : public std::iterator<std::random_access_iterator_tag, T>
 	{
-		public :
+		public :	
 			typedef	T*      		pointer;
 			typedef	T&				reference;
 			typedef	ptrdiff_t		difference_type;
@@ -30,8 +30,8 @@ namespace ft {
 			iterator(pointer ptr) : _Pointer(ptr) {};
 			iterator(const iterator& it) { *this = it; } ;
 			~iterator(void){};
-			iterator& operator=(const iterator& it) { this->_Pointer = it._Pointer; return *this; };
-
+			iterator& operator=( const iterator& it) { this->_Pointer = it._Pointer; return *this; };
+			operator iterator<const T>() const{ return iterator<const T>(_Pointer); }
 			bool operator==(const iterator& it) const { return this->_Pointer == it._Pointer; };
 			bool operator!=(const iterator& it) const { return this->_Pointer != it._Pointer; };
 
@@ -57,8 +57,6 @@ namespace ft {
 			
 			reference operator[](const int& index) const { return _Pointer[index]; };
 			
-			operator iterator<const iterator>() const{ return iterator<const T>(_Pointer);}
-
 	};
 	template <class type> 
 	iterator<type>	&operator+(typename ft::iterator<type>::difference_type n, ft::iterator<type>& it) { return it + n; };
@@ -161,8 +159,7 @@ namespace ft {
 	
 	template <class Iterator>
 	typename reverse_iterator<Iterator>::difference_type operator- (const reverse_iterator<Iterator>& lhs,
-	const reverse_iterator<Iterator>& rhs)
-	{ return lhs.base() - rhs.base(); };
+	const reverse_iterator<Iterator>& rhs) { return lhs.base() - rhs.base(); };
 }
 
 #endif
