@@ -80,10 +80,31 @@ int main ()
   // int myarray [] = { 501,502,503 };
   // myvector.insert (myvector.begin(), myarray, myarray+3);
 
-  ft::vector<int> myvector(2,100);
-  std::vector<int> therevector(2,100);
-  ft::vector<int>::const_iterator ft_it = myvector.begin();
-  std::vector<int>::const_iterator std_it = therevector.begin();
+  // ft::vector<int> myvector(2,100);
+  // std::vector<int> therevector(2,100);
+  // ft::vector<int>::const_iterator ft_it = myvector.begin();
+  std::vector<int>::iterator std_it;
+    // std::vector<int> v(3,4);
+    // std::vector<int>::iterator it,it1;
+    // it = v.begin();
+    // it1 = v.begin() + 1;
+    /*----------------------------------*/
+    /*------------ ft::vector ---------*/
+    // ft::vector<int>    my_v(3,4);
+    // ft::vector<int>::iterator my_it,my_it1, tmp;
+    // my_it = my_v.begin();
+    // my_it1 = my_v.begin() + 1;
+    // /*--------------------------
+    /*----------------------------------*/
+    /*------------ ft::vector ---------*/
+  // std::cout << "\033[1;37m[-------------------- [" << std::setw(40) << std::left << " it++ operator " << "] --------------------]\t\t\033[0m";
+    // tmp = my_it++;
+    // tmp = my_it--;
+    // std::cout << "tmp = "
+    // EQUAL(&(*my_it) != &(*tmp) && (&(*my_it) == &(*my_it1)));
+    // std::cout << "\033[1;37m[-------------------- [" << std::setw(40) << std::left << " it-- operator " << "] --------------------]\t\t\033[0m";
+	// EQUAL(&(*my_it) != &(*tmp) && (&(*my_it) == &(*(my_v.begin()))));
+    // std::cout << "\033[1;36m\n<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\033[0m\n\n";
 
   // ft::vector<int> myvector1(2,200);
   // std::vector<int> therevector1(2,200);
@@ -101,31 +122,6 @@ int main ()
   // myvector.insert (ft_it,myvector2.begin(),myvector2.end());
     
 
-  // std_it = therevector.erase(therevector.begin() + 2, therevector.begin() + 4);
-  // std::cout << " std_it = " << *std_it << std::endl;
-  // ft_it = myvector.erase(myvector.begin() + 2, myvector.begin() + 4);
-  // std::cout << " ft_it = " << *ft_it << std::endl;
-
-
-
-  std::cout << "------------------------------" << std::endl;
-  std::cout << "    ::  dyalhoum ::   " << std::endl;
-  std::cout << "------------------------------" << std::endl;
-  std::cout << "Capacity : " << therevector.capacity() << std::endl;
-  std::cout << "Size : " << therevector.size() << std::endl;
-  std::cout << "therevector contains:";
-  for (std_it = therevector.begin(); std_it < therevector.end(); std_it++)
-    std::cout << ' ' << *std_it;
-  std::cout << '\n';
-  std::cout << "------------------------------" << std::endl;
-  std::cout << "       :: dyali ::    " << std::endl;
-  std::cout << "------------------------------" << std::endl;
-  std::cout << "Capacity : " << myvector.capacity() << std::endl;
-  std::cout << "Size : " << myvector.size() << std::endl;
-  std::cout << "myvector contains:";
-  for (ft_it = myvector.begin(); ft_it < myvector.end(); ft_it++)
-    std::cout << ' ' << *ft_it;
-  std::cout << '\n';
   // std::vector<int> foo (5,100);   // three ints with a value of 100
   // std::vector<int> bar (2,100);   // two ints with a value of 200
   // ft::vector<int> myfoo (5,100);   // three ints with a value of 100
@@ -136,6 +132,39 @@ int main ()
   // if (foo> bar) std::cout << "foo is greater than bar\n";
   // if (foo<=bar) std::cout << "foo is less than or equal to bar\n";
   // if (foo>=bar) std::cout << "foo is greater than or equal to bar\n";
+  // std_it = therevector.erase(therevector.begin() + 2, therevector.begin() + 4);
+  // std::cout << " std_it = " << *std_it << std::endl;
+  // ft_it = myvector.erase(myvector.begin() + 2, myvector.begin() + 4);
+  // std::cout << " ft_it = " << *ft_it << std::endl;
+
+
+  std::vector<int> myvector;
+
+  // set some initial content:
+  for (int i=1;i<10;i++) myvector.push_back(i);
+
+  // myvector.resize(5);
+  myvector.resize(33,100);
+  // myvector.resize(12);
+
+  // std::cout << "------------------------------" << std::endl;
+  // std::cout << "    ::  dyalhoum ::   " << std::endl;
+  // std::cout << "------------------------------" << std::endl;
+  // std::cout << "Capacity : " << therevector.capacity() << std::endl;
+  // std::cout << "Size : " << therevector.size() << std::endl;
+  // std::cout << "therevector contains:";
+  // for (std_it = therevector.begin(); std_it < therevector.end(); std_it++)
+  //   std::cout << ' ' << *std_it;
+  // std::cout << '\n';
+  std::cout << "------------------------------" << std::endl;
+  std::cout << "       :: dyali ::    " << std::endl;
+  std::cout << "------------------------------" << std::endl;
+  std::cout << "Capacity : " << myvector.capacity() << std::endl;
+  std::cout << "Size : " << myvector.size() << std::endl;
+  std::cout << "myvector contains:";
+  for (std_it = myvector.begin(); std_it < myvector.end(); std_it++)
+    std::cout << ' ' << *std_it;
+  std::cout << '\n';
 
   // std::cout << "------------------------------" << std::endl;
   // std::cout << "       :: dyali ::    " << std::endl;

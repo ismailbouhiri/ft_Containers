@@ -6,7 +6,7 @@
 /*   By: ibouhiri <ibouhiri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/12 11:30:18 by ibouhiri          #+#    #+#             */
-/*   Updated: 2021/10/22 18:18:30 by ibouhiri         ###   ########.fr       */
+/*   Updated: 2021/10/23 18:14:11 by ibouhiri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,7 @@ namespace ft
         explicit vector (size_type n, const value_type& val = value_type(),
                 const allocator_type& alloc = allocator_type()) : _MyCapacity(n), _Mysize(n), _MyAllocator(alloc)
         {
+            
             if (this->_MyCapacity)
             {
                 this->_array = this->_MyAllocator.allocate(this->_MyCapacity);
@@ -95,9 +96,11 @@ namespace ft
         {
             this->_MyCapacity = x.capacity();
             this->_Mysize = x.size();
+            this->_MyAllocator = x.get_allocator();
             if (this->_MyCapacity)
             {
                 this->_array = _MyAllocator.allocate(this->_MyCapacity);
+                // _array = x._array;
                 for (size_type acc = 0; acc < this->_Mysize; acc++)
                     this->_array[acc] = x[acc];
             }
@@ -122,22 +125,36 @@ namespace ft
         // Capacity
         size_type size() const { return this->_Mysize; };
         size_type capacity() const { return this->_MyCapacity; };
-        bool empty() const { return _Mysize; };
+        bool empty() const { return !_Mysize; };
         size_type max_size() const  { return _MyAllocator.max_size(); };
         void resize (size_type n, value_type val = value_type())
         {
-            if (_Mysize < n && _MyCapacity >= n)
-                for (size_type i = _Mysize - 1; i < n ;i++)
-                    push_back(val);
-            else if (_Mysize > n)
+            if (_Mysize > n)
                 for (size_type i = _Mysize - 1; _Mysize != n; i--)
                 {
                     this->_MyAllocator.destroy(this->_array + i);
                     _Mysize--;
                 }
-            else if (n > _MyCapacity)
+            else if (_Mysize < n && _MyCapacity >= n)
+            {
                 for (size_type i = _Mysize; i < n; i++)
-                    push_back(val);
+                    _array[i] = val;
+                _Mysize = n;
+            }
+            else if (_MyCapacity < n)
+            {
+                size_type tmp_capacity = ((_MyCapacity * 2) < n) ? n : _MyCapacity * 2;
+                pointer tmp_array = _MyAllocator.allocate(tmp_capacity);
+                for (size_type i = 0; i < n; i++)
+                    if (i < _Mysize)
+                        tmp_array[i] = _array[i];
+                    else
+                        tmp_array[i] = val;
+                _MyAllocator.deallocate(this->_array, _MyCapacity);
+                _array = tmp_array;
+                _Mysize = n;
+                _MyCapacity = tmp_capacity;
+            }
         };
         void reserve (size_type n)
         {
@@ -218,15 +235,21 @@ namespace ft
         };
         void pop_back(void) { this->_MyAllocator.destroy(this->_array + this->_Mysize); this->_Mysize--; };
         iterator insert (iterator position, const value_type& val) {
-            size_type index;
+            size_type index = 0;
             if (_MyCapacity == _Mysize)
             {
-                if (!_MyCapacity)
-                    _MyCapacity++;
+                size_type tmp_capacity = (!_MyCapacity) ? 1 : _MyCapacity * 2;
                 _Mysize++;
                 size_type sign = 0;
-                pointer tmp_array = _MyAllocator.allocate(_MyCapacity * 2);
+                pointer tmp_array = _MyAllocator.allocate(tmp_capacity);
                 for (size_type i = 0; i < _Mysize; i++)
+                {
+                    std::cout << "pos = " << position << std::en    dl;
+                    if (!_array && position)
+                    {
+                        tmp_array[i] = val;
+                        break;
+                    }
                     if (position == _array + i)
                     {
                         tmp_array[i] = val;
@@ -238,8 +261,9 @@ namespace ft
                             tmp_array[i] = _array[i - 1];
                         else    
                             tmp_array[i] = _array[i];
-                _MyAllocator.deallocate(_array, _MyCapacity);
-                _MyCapacity *= 2;
+                }
+                _MyAllocator.deallocate(_array, tmp_capacity);
+                _MyCapacity *= tmp_capacity;
                 _array = tmp_array;
             }
             else if (_MyCapacity > _Mysize)
@@ -364,22 +388,7 @@ namespace ft
         }
         iterator erase (iterator position)
         {
-            value_type save;
-            for (size_type i = 0; i < _Mysize ; i++)
-            {
-                if (position == _array + i)
-                {
-                    iterator it(_array + (i + 1));
-                    for (size_type acc = i; acc < _Mysize ; acc++ )
-                    {
-                        _MyAllocator.destroy(_array + acc);
-                        _array[acc] = ((acc + 1) < _Mysize) ? _array[acc + 1] : _array[acc];
-                    }
-                    _Mysize--;
-                    return it;
-                }
-            }
-            return position;
+            return (erase(position, position + 1));
         };
         iterator erase (iterator first, iterator last)
         {            
@@ -414,9 +423,21 @@ namespace ft
             }
         };
         void swap (vector& x) {
-            vector<T,Alloc> save(x);
-            x = *this;
-            *this = save;
+            
+            size_type       tmp_MyCapacity = x.capacity();
+            size_type       tmp_Mysize = x.size();
+            allocator_type  tmp_MyAllocator = x.get_allocator();
+            
+            pointer save = x._array;
+            x._array = _array;
+            x._MyAllocator = _MyAllocator;
+            x._Mysize = _Mysize;
+            x._MyCapacity = _MyCapacity;
+            
+            _array = save;
+            _MyAllocator = tmp_MyAllocator;
+            _Mysize = tmp_Mysize;
+            _MyCapacity = tmp_MyCapacity;
         };
         
         // Allocator
@@ -447,14 +468,14 @@ namespace ft
 	{
         size_t left_size = left.size();
         size_t right_size = right.size();
-        if (left_size < right_size)
-        {
-            for (size_t i = 0; i < left_size; i++)
-                if (left[i] > right[i])
-                    return false;
-            return true;   
-        }
-        return false;
+        for (size_t i = 0; i < right_size && i < left_size; i++)
+            if (left[i] < right[i])
+                return true;
+            else if (left[i] > right[i])
+                return false;
+        if (left_size >= right_size)
+            return false;
+        return true;
     }
 	
     template <class T, class Alloc>
@@ -468,7 +489,7 @@ namespace ft
     
     
     template <class T, class Alloc>
-    void swap (vector<T,Alloc>& x, vector<T,Alloc>& y) { vector<T,Alloc> save(x); x = y; y = save; };
+    void swap (vector<T,Alloc>& x, vector<T,Alloc>& y) { x.swap(y); };
     
 }
 #endif
