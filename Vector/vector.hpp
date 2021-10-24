@@ -6,7 +6,7 @@
 /*   By: ibouhiri <ibouhiri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/12 11:30:18 by ibouhiri          #+#    #+#             */
-/*   Updated: 2021/10/23 18:14:11 by ibouhiri         ###   ########.fr       */
+/*   Updated: 2021/10/24 20:59:28 by ibouhiri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ namespace ft
             }
         };
         vector (const vector& x)
-        { 
+        {
             *this = x;
         };
         //Destrutor
@@ -94,13 +94,13 @@ namespace ft
         //EgalOperator
         vector& operator= (const vector& x)
         {
+
             this->_MyCapacity = x.capacity();
             this->_Mysize = x.size();
             this->_MyAllocator = x.get_allocator();
             if (this->_MyCapacity)
             {
                 this->_array = _MyAllocator.allocate(this->_MyCapacity);
-                // _array = x._array;
                 for (size_type acc = 0; acc < this->_Mysize; acc++)
                     this->_array[acc] = x[acc];
             }
@@ -235,7 +235,9 @@ namespace ft
         };
         void pop_back(void) { this->_MyAllocator.destroy(this->_array + this->_Mysize); this->_Mysize--; };
         iterator insert (iterator position, const value_type& val) {
+            
             size_type index = 0;
+            size_type j = 0;
             if (_MyCapacity == _Mysize)
             {
                 size_type tmp_capacity = (!_MyCapacity) ? 1 : _MyCapacity * 2;
@@ -244,42 +246,50 @@ namespace ft
                 pointer tmp_array = _MyAllocator.allocate(tmp_capacity);
                 for (size_type i = 0; i < _Mysize; i++)
                 {
-                    std::cout << "pos = " << position << std::en    dl;
-                    if (!_array && position)
+                    if (!_array)
                     {
-                        tmp_array[i] = val;
-                        break;
-                    }
-                    if (position == _array + i)
-                    {
-                        tmp_array[i] = val;
                         index = i;
                         sign = 1;
+                        tmp_array[j++] = val;
+                    }
+                    else if (position == _array + i)
+                    {
+                        index = i;
+                        sign = 1;
+                        tmp_array[j++] = val;
                     }
                     else
+                    {         
                         if (sign)
-                            tmp_array[i] = _array[i - 1];
+                            tmp_array[j++] = _array[i - 1];
                         else    
-                            tmp_array[i] = _array[i];
+                            tmp_array[j++] = _array[i];
+                    }
                 }
-                _MyAllocator.deallocate(_array, tmp_capacity);
-                _MyCapacity *= tmp_capacity;
+                _MyAllocator.deallocate(_array, _MyCapacity);
+                _MyCapacity = tmp_capacity;
                 _array = tmp_array;
             }
             else if (_MyCapacity > _Mysize)
             {
                 _Mysize++;
                 value_type save;
+                value_type saveTwo;
                 for (size_type i = 0; i < _Mysize; i++)
                 {
-                    save = _array[i];
                     if (position == _array + i)
                     {
+                        save = _array[i];
                         index = i;
                         _array[i] = val;
                     }
                     else
-                        _array[i] = save;
+                        if (index)
+                        {
+                            saveTwo = _array[i];
+                            _array[i] = save;
+                            save = saveTwo;
+                        }
                 }
             }
             iterator it(_array + index);
@@ -287,104 +297,75 @@ namespace ft
         };
         void insert (iterator position, size_type n, const value_type& val)
         {
-            if (_MyCapacity == _Mysize || _MyCapacity < (_Mysize + n))
+            if (_MyCapacity < (_Mysize + n))
             {
-                _MyCapacity = (!_MyCapacity) ? n / 2 : _MyCapacity;
+                size_type tmp_alloc = ((_MyCapacity * 2) < (_Mysize + n)) ? _Mysize + n : _MyCapacity * 2;
+                pointer tmp = _MyAllocator.allocate(tmp_alloc);
+                size_type j = 0;
                 _Mysize += n;
-                size_type sign = 0;
-                size_type alloc_size = (_MyCapacity * 2 < _Mysize) ? _Mysize : _MyCapacity * 2;
-                pointer tmp_array = _MyAllocator.allocate(alloc_size);
-                for (size_type i = 0; i < _Mysize; i++)
-                    if (position == (_array + i))
-                    {
-                        sign = 1;
-                        for (size_type acc = 0; acc < n; acc++ )
-                            tmp_array[i++] = val;
-                        i--;
-                    }
-                    else
-                        if (sign)
-                            tmp_array[i] = _array[i - n];
-                        else    
-                            tmp_array[i] = _array[i];
-                _MyAllocator.deallocate(_array, _MyCapacity);
-                _MyCapacity = (_MyCapacity * 2 < _Mysize) ? _Mysize : _MyCapacity * 2;
-                _array = tmp_array;
-            }
-            else if (_MyCapacity > _Mysize)
-            {
-                _Mysize += n;
-                value_type save;
-                for (size_type i = 0; i < _Mysize; i++)
+                for (size_type acc = 0; acc < _Mysize; acc++)
                 {
-                    save = _array[i];
-                    if (position == _array + i)
+                    if (&*position == (_array + acc))
                     {
-                        for (size_type acc = 0; acc < n; acc++)
-                        {
-                            save = _array[i];
-                            _array[i++] = val;
-                            _array[i] = save;
-                        }
+                        for (size_type i = 0; i < n; i++)
+                            _MyAllocator.construct(&tmp[j++], val);
+                        if (!_array)
+                            break;
                     }
-                    else
-                        _array[i] = save;
+                    if (acc < (_Mysize - n))
+                        _MyAllocator.construct(&tmp[j++], _array[acc]);
                 }
-            } 
+                _MyAllocator.deallocate(_array, _MyCapacity);
+                _MyCapacity = tmp_alloc;
+                _array = tmp;
+            }
+            else if (_MyCapacity > (_Mysize + n))
+            {
+                size_type pos = position - begin();
+                for (size_type i = _Mysize - 1; i >= pos; --i)
+                    _array[i + n] = _array[i];
+                for (size_type i = pos, k = 0; k < n; i++, k++)
+                    _array[i] = val;
+                _Mysize += n;
+            }
         };
         template <class InputIterator>
         void insert (iterator position, InputIterator first, InputIterator last,
                 typename std::enable_if<!std::is_integral<InputIterator>::value, InputIterator>::type* t = 0)
         {
             t = 0;
-            size_type n = last - first;
-            if (_MyCapacity == _Mysize || _MyCapacity < (_Mysize + n))
+            size_type n = std::distance(first, last);
+            if (_MyCapacity < (_Mysize + n))
             {
+                size_type tmp_alloc = ((_MyCapacity * 2) < (_Mysize + n)) ? _Mysize + n : _MyCapacity * 2;
+                pointer tmp = _MyAllocator.allocate(tmp_alloc);
+                size_type j = 0;
                 _Mysize += n;
-                _MyCapacity = (!_MyCapacity) ?  n / 2 : _MyCapacity;
-                size_type sign = 0;
-                size_type alloc_size = ((_MyCapacity * 2) < _Mysize) ? _Mysize : _MyCapacity * 2;
-                pointer tmp_array = _MyAllocator.allocate(alloc_size);
-                if (!tmp_array)
-                    throw std::bad_alloc();
-                for (size_type i = 0; i < _Mysize; i++)
-                    if (position == (_array + i))
-                    {
-                        sign = 1;
-                        for (size_type acc = 0; acc < n; acc++ )
-                        {
-                            tmp_array[i++] = *first;
-                            first = (first + 1 != last) ? first++: first ;    
-                        }
-                        i--;
-                    }
-                    else
-                        if (sign)
-                            tmp_array[i] = _array[i - n];
-                        else    
-                            tmp_array[i] = _array[i];
-                _MyAllocator.deallocate(_array, _MyCapacity);
-                _MyCapacity = (_MyCapacity * 2 < _Mysize) ? _Mysize : _MyCapacity * 2;
-                _array = tmp_array;
-            }
-            else if (_MyCapacity > _Mysize)
-            {
-                _Mysize += n;
-                value_type save;
-                for (size_type i = 0; i < _Mysize; i++)
+                for (size_type acc = 0; acc < _Mysize; acc++)
                 {
-                    save = _array[i];
-                    if (position == _array + i)
-                        for (size_type acc = 0; acc < n; acc++)
-                        {
-                            save = _array[i];
-                            _array[i++] = *(first++);
-                            _array[i] = save;
-                        }
-                    else
-                        _array[i] = save;
+                    if (&*position == (_array + acc))
+                    {
+                        for (size_type i = 0; i < n; i++)
+                            _MyAllocator.construct(&tmp[j++], *(first++));
+                        if (!_array)
+                            break;
+                    }
+                    if (acc < (_Mysize - n))
+                        _MyAllocator.construct(&tmp[j++], _array[acc]);
                 }
-            }     
+                _MyAllocator.deallocate(_array, _MyCapacity);
+                _MyCapacity = tmp_alloc;
+                _array = tmp;
+            }
+            else if (_MyCapacity > (_Mysize + n))
+            {
+                size_type pos = position - begin();
+                for (size_type i = _Mysize - 1; i >= pos; --i)
+                    _array[i + n] = _array[i];
+                for (size_type i = pos, k = 0; k < n; i++, k++)
+                    _array[i] = *(first++);
+                _Mysize += n;
+            }
         }
         iterator erase (iterator position)
         {

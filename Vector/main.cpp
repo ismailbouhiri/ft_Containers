@@ -3,6 +3,13 @@
 #include <vector>
 int main ()
 {
+
+
+  std::vector<int> v(90, 3); // s = 20
+  v.reserve(100);
+
+  v.insert(v.begin(), 100, 6); // s + 5 > 20, s + n
+  std::cout <<v.size() << " " <<  v.capacity() << std::endl;
   // std::vector<int> therevector;
   // ft::vector<int> myvector;
   // ft::vector<int> myvector1;
@@ -83,7 +90,7 @@ int main ()
   // ft::vector<int> myvector(2,100);
   // std::vector<int> therevector(2,100);
   // ft::vector<int>::const_iterator ft_it = myvector.begin();
-  std::vector<int>::iterator std_it;
+  // std::vector<int>::iterator std_it;
     // std::vector<int> v(3,4);
     // std::vector<int>::iterator it,it1;
     // it = v.begin();
@@ -138,13 +145,13 @@ int main ()
   // std::cout << " ft_it = " << *ft_it << std::endl;
 
 
-  std::vector<int> myvector;
+  // std::vector<int> myvector;
 
   // set some initial content:
-  for (int i=1;i<10;i++) myvector.push_back(i);
+  // for (int i=1;i<10;i++) myvector.push_back(i);
 
   // myvector.resize(5);
-  myvector.resize(33,100);
+  // myvector.resize(33,100);
   // myvector.resize(12);
 
   // std::cout << "------------------------------" << std::endl;
@@ -156,15 +163,15 @@ int main ()
   // for (std_it = therevector.begin(); std_it < therevector.end(); std_it++)
   //   std::cout << ' ' << *std_it;
   // std::cout << '\n';
-  std::cout << "------------------------------" << std::endl;
-  std::cout << "       :: dyali ::    " << std::endl;
-  std::cout << "------------------------------" << std::endl;
-  std::cout << "Capacity : " << myvector.capacity() << std::endl;
-  std::cout << "Size : " << myvector.size() << std::endl;
-  std::cout << "myvector contains:";
-  for (std_it = myvector.begin(); std_it < myvector.end(); std_it++)
-    std::cout << ' ' << *std_it;
-  std::cout << '\n';
+  // std::cout << "------------------------------" << std::endl;
+  // std::cout << "       :: dyali ::    " << std::endl;
+  // std::cout << "------------------------------" << std::endl;
+  // std::cout << "Capacity : " << myvector.capacity() << std::endl;
+  // std::cout << "Size : " << myvector.size() << std::endl;
+  // std::cout << "myvector contains:";
+  // for (std_it = myvector.begin(); std_it < myvector.end(); std_it++)
+  //   std::cout << ' ' << *std_it;
+  // std::cout << '\n';
 
   // std::cout << "------------------------------" << std::endl;
   // std::cout << "       :: dyali ::    " << std::endl;
@@ -175,7 +182,27 @@ int main ()
   // if (myfoo> mybar) std::cout << "myfoo is greater than mybar\n";
   // if (myfoo<=mybar) std::cout << "myfoo is less than or equal to mybar\n";
   // if (myfoo>=mybar) std::cout << "myfoo is greater than or equal to bar\n";
+    // std::vector<int> test2;
+    // test2.push_back(10);
+    // test2.push_back(20);
+    // test2.push_back(80);
+    // std::vector<int>::iterator it2 = test2.begin();
+    // std::vector<int>::iterator it0 = test2.begin();
+    // std::cout << it2 - it0 << "\n";
+    //-------------------
 
+    // ft::vector<int> test;
+    // test.push_back(10);
+    // test.push_back(20);
+    // test2.push_back(80);
+    // ft::vector<int>::iterator it = test.begin();
+    // ft::vector<int>::iterator it3 = test.begin();
 
+    // std::cout << (it - it3) << "\n";
+    // (void)it;
+    // (void)it0;
+    // (void)it2;
+    // (void)it3;
+    //std::cout << *it3;
   return 0;
 }
