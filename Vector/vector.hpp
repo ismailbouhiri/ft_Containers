@@ -6,7 +6,7 @@
 /*   By: ibouhiri <ibouhiri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/12 11:30:18 by ibouhiri          #+#    #+#             */
-/*   Updated: 2021/10/24 20:59:28 by ibouhiri         ###   ########.fr       */
+/*   Updated: 2021/10/29 21:47:35 by ibouhiri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,8 @@ namespace ft
             {
                 this->_array = this->_MyAllocator.allocate(this->_MyCapacity);
                 for (size_type acc = 0; acc < this->_Mysize; acc++)
-                    this->_array[acc] = val;
+                    _MyAllocator.construct(&_array[acc], val);
+
             }
             else {
                 this->_array = nullptr;
@@ -74,7 +75,8 @@ namespace ft
             {
                 this->_array = this->_MyAllocator.allocate(this->_MyCapacity);
                 for (size_type acc = 0; acc < _Mysize; acc++)
-                    this->_array[acc] = *(first++);
+                    _MyAllocator.construct(&_array[acc], *(first++));
+
             }
             else {
                 this->_array = nullptr;
@@ -82,19 +84,26 @@ namespace ft
         };
         vector (const vector& x)
         {
+            this->_MyCapacity = 0;
+            this->_Mysize = 0;
             *this = x;
         };
         //Destrutor
         ~vector()
         {
             if (this->_MyCapacity)
+            {
+                for (size_type acc = 0; acc < _Mysize; acc++)
+                    this->_MyAllocator.destroy(this->_array + acc);
                 this->_MyAllocator.deallocate(this->_array, this->_MyCapacity);
+            }
         };
 
         //EgalOperator
         vector& operator= (const vector& x)
         {
-
+            if (this->_MyCapacity)
+                this->_MyAllocator.deallocate(this->_array, this->_MyCapacity);
             this->_MyCapacity = x.capacity();
             this->_Mysize = x.size();
             this->_MyAllocator = x.get_allocator();
@@ -102,7 +111,7 @@ namespace ft
             {
                 this->_array = _MyAllocator.allocate(this->_MyCapacity);
                 for (size_type acc = 0; acc < this->_Mysize; acc++)
-                    this->_array[acc] = x[acc];
+                    _MyAllocator.construct(&_array[acc], x[acc]);
             }
             else {
                 this->_array = nullptr;
@@ -138,7 +147,7 @@ namespace ft
             else if (_Mysize < n && _MyCapacity >= n)
             {
                 for (size_type i = _Mysize; i < n; i++)
-                    _array[i] = val;
+                    _MyAllocator.construct(&_array[i], val);
                 _Mysize = n;
             }
             else if (_MyCapacity < n)
@@ -147,9 +156,9 @@ namespace ft
                 pointer tmp_array = _MyAllocator.allocate(tmp_capacity);
                 for (size_type i = 0; i < n; i++)
                     if (i < _Mysize)
-                        tmp_array[i] = _array[i];
+                        _MyAllocator.construct(&tmp_array[i], _array[i]);
                     else
-                        tmp_array[i] = val;
+                        _MyAllocator.construct(&tmp_array[i], val);
                 _MyAllocator.deallocate(this->_array, _MyCapacity);
                 _array = tmp_array;
                 _Mysize = n;
@@ -162,7 +171,7 @@ namespace ft
             {
                 pointer tmp_array = _MyAllocator.allocate(n);
                 for (size_type i = 0; i < _Mysize; i++)
-                    tmp_array[i] = _array[i];
+                    _MyAllocator.construct(&tmp_array[i], _array[i]);
                 _MyAllocator.deallocate(_array, _MyCapacity);
                 _MyCapacity = n;
                 _array = tmp_array;
@@ -194,7 +203,8 @@ namespace ft
             this->_Mysize = n;
             this->_array = this->_MyAllocator.allocate(this->_MyCapacity);
             for(size_type acc = 0; acc < n; acc++)
-                this->_array[acc] = *(first++);
+                _MyAllocator.construct(&_array[acc], *(first++));
+
         };
         void assign (size_type n, const value_type& val)
         {
@@ -203,7 +213,7 @@ namespace ft
             this->_Mysize = n;
             this->_array = this->_MyAllocator.allocate(this->_MyCapacity);
             for(size_type acc = 0; acc < n; acc++)
-                this->_array[acc] = val;
+                _MyAllocator.construct(&_array[acc], val);
         };
         void push_back (const value_type& val)
         {
@@ -212,11 +222,12 @@ namespace ft
                 this->_MyCapacity += 1;
                 this->_Mysize += 1;
                 this->_array = this->_MyAllocator.allocate(1);
-                this->_array[0] = val;
+                _MyAllocator.construct(&_array[0], val);
+
             }
             else if (this->_MyCapacity > this->_Mysize)
             {
-                this->_array[this->_Mysize] = val;
+                _MyAllocator.construct(&_array[_Mysize], val);
                 this->_Mysize += 1;
             }
             else
@@ -226,8 +237,8 @@ namespace ft
                 this->_MyCapacity *= 2;
                 tmp_array = this->_MyAllocator.allocate(_MyCapacity);
                 for (size_type i = 0; i < _Mysize; i++)
-                    tmp_array[i] = this->_array[i];
-                tmp_array[_Mysize] = val;
+                    _MyAllocator.construct(&tmp_array[i], _array[i]);
+                _MyAllocator.construct(&tmp_array[_Mysize], val);
                 this->_MyAllocator.deallocate(_array, tmp_capacity);
                 this->_Mysize += 1;
                 this->_array = tmp_array;

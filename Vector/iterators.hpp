@@ -48,7 +48,7 @@ namespace ft {
 			iterator	&operator+=(int n) { _Pointer = _Pointer + n; return *this; };
 			iterator	&operator-=(int n) { _Pointer = _Pointer - n; return *this; };
 
-			difference_type operator-(const iterator& it) { return this->_Pointer - it._Pointer; };
+			difference_type operator-(const iterator& it) { return _Pointer - it._Pointer; };
 
 			bool operator<(const iterator& it) const { return (_Pointer < it._Pointer); };
 			bool operator>(const iterator& it) const { return (_Pointer > it._Pointer); };
