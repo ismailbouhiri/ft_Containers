@@ -6,7 +6,7 @@
 /*   By: ibouhiri <ibouhiri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/12 11:30:18 by ibouhiri          #+#    #+#             */
-/*   Updated: 2021/10/29 21:47:35 by ibouhiri         ###   ########.fr       */
+/*   Updated: 2021/10/30 13:39:28 by ibouhiri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,12 +82,8 @@ namespace ft
                 this->_array = nullptr;
             }
         };
-        vector (const vector& x)
-        {
-            this->_MyCapacity = 0;
-            this->_Mysize = 0;
-            *this = x;
-        };
+        vector (const vector& x) : _MyCapacity(0), _Mysize(0)
+        { *this = x; };
         //Destrutor
         ~vector()
         {

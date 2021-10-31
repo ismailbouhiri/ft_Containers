@@ -11,7 +11,7 @@
 # ************************************************************************************************** #
 
 COMPILER = clang++
-FLAGS = --std=c++98 -Wall -Wextra -Werror -fsanitize=undefined -g3
+FLAGS = --std=c++98 -Wall -Wextra -Werror -fsanitize=address
 # FLAGS = --std=c++98 -Wall -Wextra -Werror
 
 vector:

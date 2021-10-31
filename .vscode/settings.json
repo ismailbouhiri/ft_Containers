@@ -62,6 +62,10 @@
         "system_error": "cpp",
         "type_traits": "cpp",
         "typeinfo": "cpp",
-        "array": "cpp"
-    }
+        "array": "cpp",
+        "iomanip": "cpp",
+        "__tree": "cpp",
+        "map": "cpp"
+    },
+    "C_Cpp.errorSquiggles": "Disabled"
 }
