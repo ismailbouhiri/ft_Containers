@@ -6,7 +6,7 @@
 /*   By: ibouhiri <ibouhiri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 19:59:14 by ibouhiri          #+#    #+#             */
-/*   Updated: 2021/11/01 11:33:39 by ibouhiri         ###   ########.fr       */
+/*   Updated: 2021/11/01 19:14:40 by ibouhiri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,6 +52,7 @@ namespace ft
          rbt(const rbt& Cobj) : _size(0), _root(nullptr)
          { *this = Cobj; };
          
+         /////////////////////////////// insert methods ///////////////////////////////////// 
          node& create_node(const value_type& val)
          {
             node *new_node = node_allocator.allocate(1);
@@ -66,6 +67,34 @@ namespace ft
             return *new_node;
          }
          
+         void  rightRotation(node& Gp_node)
+         {
+            node *tmp = Gp_node->leftChild;
+            Gp_node->leftChild = tmp->leftChild;
+            if (Gp_node->leftChild)
+            {
+               Gp_node->leftChild->parent = Gp_node;
+               Gp_node->leftChild->isleftChild = false;
+            }
+            if (Gp_node->parent == nullptr) {
+               _root = tmp;
+               tmp->parent = nullptr;
+            } else {
+               tmp->parent = Gp_node->parent;
+               if (Gp_node->isleftChild) {
+                  tmp->isleftChild = true;
+                  tmp->parent->leftChild = tmp;
+               }
+               else {
+                  tmp->isleftChild = false;
+                  tmp->parent->leftChild = tmp;
+               }
+            }
+            tmp->leftChild = Gp_node;
+            Gp_node->isleftChild = true;
+            Gp_node->parent = tmp;         
+         }
+
          void  leftRotation(node& Gp_node)
          {
             node *tmp = Gp_node->rightChild;
@@ -91,9 +120,8 @@ namespace ft
             }
             tmp->leftChild = Gp_node;
             Gp_node->isleftChild = true;
-            Gp_node->parent = tmp;         
+            Gp_node->parent = tmp;
          }
-         
          void  rotate(node& _node)
          {
             if (_node->isleftChild)
@@ -107,7 +135,7 @@ namespace ft
                }
                else
                {
-                  rightRotation(_node->parent->parent);
+                  rightRotation(_node->parent);
                   leftRotation(_node->parent);
                   _node->isblack = true;
                   _node->rightChild->isblack = false;
@@ -124,13 +152,12 @@ namespace ft
                }
                else
                {
-                  leftRotation(_node->parent->parent);
+                  leftRotation(_node->parent);
                   rightRotation(_node->parent);
                   _node->isblack = true;
                   _node->rightChild->isblack = false;
                   _node->leftChild->isblack = false;
                }
-               
          }
          
          void  FixTree(node& _node)
@@ -167,13 +194,6 @@ namespace ft
             checkcolor(_node->parent);
          }
 
-
-         
-         void treebalance(node& new_node)
-         {
-            checkcolor(new_node);
-         }
-         
          pair<std::iterator,bool>  add_node( const node& current, const node& new_node )
          {
             if (_value_compare(current->pair, new_node->pair))
@@ -183,7 +203,7 @@ namespace ft
                   current->rightChild = new_node;
                   new_node->parent = current;
                   _size++;
-                  treebalance(new_node);
+                  checkcolor(new_node);
                   return (make_pair(iterator(current), true));
                }
                return (add_node(current->rightChild, new_node));
@@ -196,7 +216,7 @@ namespace ft
                   new_node->parent = current;
                   new_node->isleftChild = true;
                   _size++;
-                  treebalance(new_node);
+                  checkcolor(new_node);
                   return (make_pair(iterator(current), true));
                }
                return (add_node(current->leftChild, new_node));
@@ -217,6 +237,14 @@ namespace ft
             }
             return ( add_node(_root, create_node(val)) );
          }
+         /////////////////////////////////// end methods insert //////////////////////////////////
+         
+         /////////////////////////////////// search method ///////////////////////////////////////
+         
+         node  search(const value_type& )
+         
+         /////////////////////////////////// end search methods  /////////////////////////////////
+         
    };
 }
 
