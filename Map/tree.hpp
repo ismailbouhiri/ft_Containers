@@ -6,7 +6,7 @@
 /*   By: ibouhiri <ibouhiri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 19:59:14 by ibouhiri          #+#    #+#             */
-/*   Updated: 2021/10/31 11:44:08 by ibouhiri         ###   ########.fr       */
+/*   Updated: 2021/11/01 11:33:39 by ibouhiri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,74 @@ namespace ft
             _Myallocator.construct(new_node->pair, val);
             return *new_node;
          }
-
+         
+         void  leftRotation(node& Gp_node)
+         {
+            node *tmp = Gp_node->rightChild;
+            Gp_node->rightChild = tmp->leftChild;
+            if (Gp_node->rightChild)
+            {
+               Gp_node->rightChild->parent = Gp_node;
+               Gp_node->rightChild->isleftChild = false;
+            }
+            if (Gp_node->parent == nullptr) {
+               _root = tmp;
+               tmp->parent = nullptr;
+            } else {
+               tmp->parent = Gp_node->parent;
+               if (Gp_node->isleftChild) {
+                  tmp->isleftChild = true;
+                  tmp->parent->leftChild = tmp;
+               }
+               else {
+                  tmp->isleftChild = false;
+                  tmp->parent->rightChild = tmp;
+               }
+            }
+            tmp->leftChild = Gp_node;
+            Gp_node->isleftChild = true;
+            Gp_node->parent = tmp;         
+         }
+         
+         void  rotate(node& _node)
+         {
+            if (_node->isleftChild)
+               if (_node->parent->isleftChild)
+               {
+                  rightRotation(_node->parent->parent);
+                  _node->isblack = false;
+                  _node->parent->isblack = true;
+                  if (_node->parent->rightChild)
+                     _node->parent->rightChild->isblackChild = false;
+               }
+               else
+               {
+                  rightRotation(_node->parent->parent);
+                  leftRotation(_node->parent);
+                  _node->isblack = true;
+                  _node->rightChild->isblack = false;
+                  _node->leftChild->isblack = false;
+               }
+            else
+               if (_node->parent->isleftChild)
+               {
+                  leftRotation(_node->parent->parent);
+                  _node->isblack = false;
+                  _node->parent->isblack = true;
+                  if (_node->parent->rightChild)
+                     _node->parent->rightChild->isblackChild = false;
+               }
+               else
+               {
+                  leftRotation(_node->parent->parent);
+                  rightRotation(_node->parent);
+                  _node->isblack = true;
+                  _node->rightChild->isblack = false;
+                  _node->leftChild->isblack = false;
+               }
+               
+         }
+         
          void  FixTree(node& _node)
          {
             if (_node->parent->isleftChild)
