@@ -6,7 +6,7 @@
 /*   By: ibouhiri <ibouhiri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 19:59:14 by ibouhiri          #+#    #+#             */
-/*   Updated: 2021/11/01 19:14:40 by ibouhiri         ###   ########.fr       */
+/*   Updated: 2021/11/03 17:51:59 by ibouhiri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,14 @@
 
 # include "iterator.hpp"
 
+
 template<class T>
 struct ft_node 
 {
    T  *pair;
    bool isblack;
    bool isleftChild;
+   bool isdoubleBlack;
    struct ft_node *parent;
    struct ft_node *leftChild;
    struct ft_node *rightChild;
@@ -52,6 +54,34 @@ namespace ft
          rbt(const rbt& Cobj) : _size(0), _root(nullptr)
          { *this = Cobj; };
          
+
+
+
+         /////////////////////////////////// DELETE method ///////////////////////////////////////
+
+         /////////////////////////////////// end DELETE methods  /////////////////////////////////
+
+         /////////////////////////////////// search method ///////////////////////////////////////
+         
+         node&  search_key(const node& current, const key_type& key)
+         {
+            if (!current)
+               return (NULL);
+            if (_value_compare(current->pair->first, key))
+               return(search_key(current->rightChild, key));
+             if (_value_compare(key, current->pair->first))
+               return (search_key(current->leftChild, key));
+            return (current);
+         }
+         
+         node&  search(const key_type& key)
+         {
+               node *ret = search_key(_root, key);
+               return ((ret) ? ret : NULL);
+         }
+         
+         /////////////////////////////////// end search methods  /////////////////////////////////
+         
          /////////////////////////////// insert methods ///////////////////////////////////// 
          node& create_node(const value_type& val)
          {
@@ -60,6 +90,7 @@ namespace ft
             
             new_node->isblack = false;
             new_node->isleftChild = false;
+            new_node->isdoubleBlack = false;
             new_node->leftChild = nullptr;
             new_node->rightChild = nullptr;
             new_node->parent = nullptr;
@@ -237,14 +268,8 @@ namespace ft
             }
             return ( add_node(_root, create_node(val)) );
          }
-         /////////////////////////////////// end methods insert //////////////////////////////////
          
-         /////////////////////////////////// search method ///////////////////////////////////////
-         
-         node  search(const value_type& )
-         
-         /////////////////////////////////// end search methods  /////////////////////////////////
-         
+         /////////////////////////////////// end methods insert //////////////////////////////////    
    };
 }
 

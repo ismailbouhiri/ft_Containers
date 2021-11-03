@@ -6,7 +6,7 @@
 /*   By: ibouhiri <ibouhiri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 09:43:39 by ibouhiri          #+#    #+#             */
-/*   Updated: 2021/10/29 18:13:07 by ibouhiri         ###   ########.fr       */
+/*   Updated: 2021/11/03 14:57:25 by ibouhiri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ namespace ft
 				return *this;
 			};
 	};
+	
 	template <class T1, class T2>
 	bool operator== (const pair<T1,T2>& lhs, const pair<T1,T2>& rhs)
 	{
@@ -65,11 +66,12 @@ namespace ft
 	template <class T1, class T2>
 	bool operator>= (const pair<T1,T2>& lhs, const pair<T1,T2>& rhs)
 	{ return !(lhs < rhs); };
+	
 	template <class T1, class T2>
   	pair<T1,T2> make_pair (T1 x, T2 y)
 	{ return pair<T1, T2>(x,y); };
 	
-	// template < class T, class Map>
+	// template < class T>
 	// class iterator : public std::iterator<std::bidirectional_iterator_tag, T>
 	// {
 	// 	private:
