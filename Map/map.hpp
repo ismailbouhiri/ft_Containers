@@ -6,7 +6,7 @@
 /*   By: ibouhiri <ibouhiri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/25 11:05:20 by ibouhiri          #+#    #+#             */
-/*   Updated: 2021/11/03 12:33:28 by ibouhiri         ###   ########.fr       */
+/*   Updated: 2021/11/04 10:00:14 by ibouhiri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 # include <iostream>
 # include "iterator.hpp"
 # include "tree.hpp"
-
+class tree;
 namespace ft 
 {
 	

@@ -6,7 +6,7 @@
 /*   By: ibouhiri <ibouhiri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 19:59:14 by ibouhiri          #+#    #+#             */
-/*   Updated: 2021/11/03 17:51:59 by ibouhiri         ###   ########.fr       */
+/*   Updated: 2021/11/04 12:54:59 by ibouhiri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #define TREE_HPP
 
 # include "iterator.hpp"
+# include "map.hpp"
 
 
 template<class T>
@@ -31,12 +32,13 @@ struct ft_node
 namespace ft
 {   
    template <class value_type, class Alloc, class compare>
-   class rbt
+   class tree
    {
       public:
-         typedef ft_node<value_type>   node;
-         typedef Alloc                 allocator_type;         
-         typedef size_t                size_type;
+         typedef typename value_type::first  key_type;
+         typedef ft_node<value_type>         node;
+         typedef Alloc                       allocator_type;         
+         typedef size_t                      size_type;
       
       private:
          allocator_type    _Myallocator;
@@ -49,17 +51,89 @@ namespace ft
          
       public:
       
-         rbt( void ): _size(0), _root(nullptr)  {};
-         rbt( const allocator_type& alloc, const compare& comp ): _size(0), _root(nullptr), _Myallocator(alloc), _value_compare(comp) {};
-         rbt(const rbt& Cobj) : _size(0), _root(nullptr)
+         tree( void ): _size(0), _root(nullptr)  {};
+         tree( const allocator_type& alloc, const compare& comp ): _size(0), _root(nullptr), _Myallocator(alloc), _value_compare(comp) {};
+         tree(const tree& Cobj) : _size(0), _root(nullptr)
          { *this = Cobj; };
          
-
-
-
          /////////////////////////////////// DELETE method ///////////////////////////////////////
+         
+         bool     IfSiblingIsBlack(const node& _n)
+         {
+            if (_n->isleftChild)
+               return ((!_n->parent->rightChild) || _n->parent->rightChild->isblack);
+            if (!_n->isleftChild)
+               return ((!_n->parent->leftChild) || _n->parent->leftChild->isblack);
+            return true;
+         }
 
+         void  free_node( node& del_n )
+         {
+            _Myallocator.destroy(del_n->pair);
+            _Myallocator.deallocate(del_n->pair, 1);
+            node_allocator.deallocate(del_n, 1);
+            del_n = nullptr;
+         }
+         
+         node&    getNodeInOrderSuccessor(const node& _n)
+         {
+            node  *tmp = _n->rightChild;
+            while (tmp && tmp->leftChild)
+               tmp = tmp->leftChild;
+            return tmp;
+         }
+
+         node&    getNodeInOrderPredecessor(const node& _n)
+         {
+            node  *tmp = _n->leftChild;
+            while (tmp && tmp->rightChild)
+               tmp = tmp->rightChild;
+            return tmp;
+         }
+         
+         node& getLeaf(node& del_node)
+         {
+            if (!del_node->leftChild && !del_node->rightChild)
+               return del_node;
+            node *leaf = getNodeInOrderPredecessor(del_node);
+            if (!leaf)
+               leaf = getNodeInOrderSuccessor(del_node);
+            // swap value of the del_node and leaf
+            if (leaf)
+            {
+               _Myallocator.destory(del_node->pair);
+               _Myallocator.construct(del_node->pair, *(leaf->pair));
+               
+            }
+            return (getLeaf(leaf));
+         }
+
+         // void delete_helper( const node& del_n )
+         // {
+         //    if (!del_n->isblack && !del_n->rightChild && !del_n->leftChild)
+         //       return ( free_node(del_n) );
+           
+         //    if ()
+         //       return ( free_node(del_n) );
+         // }
+         
+         size_type deleteNode (const key_type& key)
+         {
+            node *del_node = search_key(_root, key);
+            if (del_node)
+            {
+               del_node = getLeaf(del_node);
+               _size--;
+            }
+            return ( _size );
+         }
+
+
+         
          /////////////////////////////////// end DELETE methods  /////////////////////////////////
+
+
+
 
          /////////////////////////////////// search method ///////////////////////////////////////
          
