@@ -3,15 +3,19 @@
 #include "map.hpp"
 int main ()
 {
-  ft::pair<int,char> foo (10,'z');
-  ft::pair<int,char> bar (90,'a');
+  ft::map<size_t,int> foo;
 
-  if (foo==bar) std::cout << "foo and bar are equal\n";
-  if (foo!=bar) std::cout << "foo and bar are not equal\n";
-  if (foo< bar) std::cout << "foo is less than bar\n";
-  if (foo> bar) std::cout << "foo is greater than bar\n";
-  if (foo<=bar) std::cout << "foo is less than or equal to bar\n";
-  if (foo>=bar) std::cout << "foo is greater than or equal to bar\n";
-
+  for (size_t i = 0; i < 1e6; i++)
+  {
+    // std::cout << "i  = " << i << std::endl;
+    foo.insert(ft::make_pair(i, 300));
+  }
+  std::cout << foo.size() << std::endl;
+  for (size_t i = 0; i < 1e6; i++)
+  {
+      foo.remove(i);
+  }
+  foo.print_h();
+  std::cout << foo.size() << std::endl;
   return 0;
 }
