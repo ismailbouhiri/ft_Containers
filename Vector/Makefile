@@ -11,14 +11,18 @@
 # ************************************************************************************************** #
 
 COMPILER = clang++
+FILE = Vector_tests.cpp
 FLAGS = --std=c++98 -Wall -Wextra -Werror -fsanitize=address
+OUT = vector.out
 # FLAGS = --std=c++98 -Wall -Wextra -Werror
 
-vector:
-	@$(COMPILER) $(FLAGS)	Vector_tests.cpp -o vector.out 
+vector: $(OUT)
 
-# map:
-# 	@$(COMPILER) $(FLAGS)	Map_tests.cpp -o map.out 
+$(OUT): $(FILE)
+	@$(COMPILER) $(FLAGS) $(FILE) -o $(OUT)
+
+map:
+	@$(COMPILER) $(FLAGS)	Map_tests.cpp -o map.out 
 
 # stack:
 # 	@$(COMPILER) $(FLAGS)	Stack_tests.cpp -o stack.out 

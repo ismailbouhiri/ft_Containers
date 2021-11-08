@@ -28,7 +28,7 @@
 # define RESET "\e[0m"
 
 # define EQUAL(x) ((x) ? (std::cout << "\033[1;32mAC\033[0m\n") : (std::cout << "\033[1;31mWA\033[0m\n"))
-# define TIME_FAC 5 // the ft::vector methods can be slower up to std::vector methods * TIME_FAC (MAX 20)
+# define TIME_FAC 20 // the ft::vector methods can be slower up to std::vector methods * TIME_FAC (MAX 20)
 
 time_t get_time(void)
 {
@@ -42,6 +42,7 @@ time_t get_time(void)
 #if 1
 void    iterator_tests(void)
 {
+
     std::cout << "\033[1;36m<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< vector iterator tests >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\033[0m\n\n";
     /*------------ std::vector ---------*/
     std::vector<int> v(3,4);
@@ -269,7 +270,6 @@ void    reverse_iterator_tests(void)
 	EQUAL((&(*(2 + my_rit)) == &(*(1 + my_rit1))) && (&(*(2 + rit)) == &(*(1 + rit_1))));
     std::cout << "\033[1;37m[-------------------- [" << std::setw(40) << std::left << " - operator (rit1 - rit) " << "] --------------------]\t\t\033[0m";
     EQUAL(((my_rit - my_rit1) == (rit - rit_1)) && ((my_rit1 - my_rit) == (rit_1 - rit)));
-    std::cout << "my_rit - my_rit1 "  << my_rit - my_rit1 << "   |     |  rit - rit_1 : " << rit - rit_1 << std::endl;
     
     std::cout << "\033[1;37m[-------------------- [" << std::setw(40) << std::left << " rit++ operator " << "] --------------------]\t\t\033[0m";
     {
@@ -3234,6 +3234,7 @@ int main(void)
     reverse_iterator_tests();
 	reverse_iterator_with_ft_vector();
     vector_tests();
-    system("leaks vector.out");
+    // system("leaks vector.out");
+    
     return 0;
 }

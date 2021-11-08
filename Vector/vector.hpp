@@ -6,7 +6,7 @@
 /*   By: ibouhiri <ibouhiri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/12 11:30:18 by ibouhiri          #+#    #+#             */
-/*   Updated: 2021/10/30 13:39:28 by ibouhiri         ###   ########.fr       */
+/*   Updated: 2021/11/08 16:17:47 by ibouhiri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 #include <iostream>
 #include <memory>
 #include <vector>
-# include "iterators.hpp"
+# include "random_access_iterators.hpp"
             
 namespace ft
 {   
@@ -54,7 +54,11 @@ namespace ft
             
             if (this->_MyCapacity)
             {
+                if (_MyCapacity > max_size())
+                    throw std::length_error("no left space!!");
                 this->_array = this->_MyAllocator.allocate(this->_MyCapacity);
+                if (!_array)
+                    throw std::bad_alloc();
                 for (size_type acc = 0; acc < this->_Mysize; acc++)
                     _MyAllocator.construct(&_array[acc], val);
 
@@ -73,7 +77,11 @@ namespace ft
             this->_Mysize = _MyCapacity;
             if (this->_MyCapacity)
             {
+                if ( _MyCapacity > max_size() )
+                    throw std::length_error("no left space!!");
                 this->_array = this->_MyAllocator.allocate(this->_MyCapacity);
+                if (!_array)
+                    throw std::bad_alloc();
                 for (size_type acc = 0; acc < _Mysize; acc++)
                     _MyAllocator.construct(&_array[acc], *(first++));
 
@@ -89,9 +97,9 @@ namespace ft
         {
             if (this->_MyCapacity)
             {
-                for (size_type acc = 0; acc < _Mysize; acc++)
-                    this->_MyAllocator.destroy(this->_array + acc);
+                clear();
                 this->_MyAllocator.deallocate(this->_array, this->_MyCapacity);
+                
             }
         };
 
@@ -99,13 +107,19 @@ namespace ft
         vector& operator= (const vector& x)
         {
             if (this->_MyCapacity)
+            {
+                clear();
                 this->_MyAllocator.deallocate(this->_array, this->_MyCapacity);
+            }
             this->_MyCapacity = x.capacity();
             this->_Mysize = x.size();
             this->_MyAllocator = x.get_allocator();
             if (this->_MyCapacity)
             {
+                if (_MyCapacity > max_size()) throw std::length_error("no left space!!");
                 this->_array = _MyAllocator.allocate(this->_MyCapacity);
+                if (!_array)
+                    throw std::bad_alloc();
                 for (size_type acc = 0; acc < this->_Mysize; acc++)
                     _MyAllocator.construct(&_array[acc], x[acc]);
             }
@@ -149,12 +163,16 @@ namespace ft
             else if (_MyCapacity < n)
             {
                 size_type tmp_capacity = ((_MyCapacity * 2) < n) ? n : _MyCapacity * 2;
+                if (tmp_capacity > max_size()) throw std::length_error("no left space!!");
                 pointer tmp_array = _MyAllocator.allocate(tmp_capacity);
+                if (!tmp_array)
+                    throw std::bad_alloc();
                 for (size_type i = 0; i < n; i++)
                     if (i < _Mysize)
                         _MyAllocator.construct(&tmp_array[i], _array[i]);
                     else
                         _MyAllocator.construct(&tmp_array[i], val);
+                clear();
                 _MyAllocator.deallocate(this->_array, _MyCapacity);
                 _array = tmp_array;
                 _Mysize = n;
@@ -165,9 +183,15 @@ namespace ft
         {
             if (n > _MyCapacity)
             {
+                if (n > max_size()) throw std::length_error("no left space!!");
                 pointer tmp_array = _MyAllocator.allocate(n);
+                if (!tmp_array)
+                    throw std::bad_alloc();
                 for (size_type i = 0; i < _Mysize; i++)
+                {
                     _MyAllocator.construct(&tmp_array[i], _array[i]);
+                    // _MyAllocator.destroy(_array + i);
+                }
                 _MyAllocator.deallocate(_array, _MyCapacity);
                 _MyCapacity = n;
                 _array = tmp_array;
@@ -197,7 +221,10 @@ namespace ft
             size_type n = last - first;
             this->_MyCapacity = (n > this->_MyCapacity) ? n : this->_MyCapacity;
             this->_Mysize = n;
+            if (_MyCapacity > max_size()) throw std::length_error("no left space!!");
             this->_array = this->_MyAllocator.allocate(this->_MyCapacity);
+            if (!_array)
+                throw std::bad_alloc();
             for(size_type acc = 0; acc < n; acc++)
                 _MyAllocator.construct(&_array[acc], *(first++));
 
@@ -207,7 +234,10 @@ namespace ft
             this->_MyAllocator.deallocate(this->_array, this->_MyCapacity);      
             this->_MyCapacity = (n > this->_MyCapacity) ? n : this->_MyCapacity;
             this->_Mysize = n;
+            if (_MyCapacity > max_size()) throw std::length_error("no left space!!");
             this->_array = this->_MyAllocator.allocate(this->_MyCapacity);
+            if (!_array)
+                throw std::bad_alloc();
             for(size_type acc = 0; acc < n; acc++)
                 _MyAllocator.construct(&_array[acc], val);
         };
@@ -217,7 +247,10 @@ namespace ft
             {
                 this->_MyCapacity += 1;
                 this->_Mysize += 1;
+                if (_MyCapacity > max_size()) throw std::length_error("no left space!!");
                 this->_array = this->_MyAllocator.allocate(1);
+                if (!_array)
+                    throw std::bad_alloc();
                 _MyAllocator.construct(&_array[0], val);
 
             }
@@ -231,7 +264,10 @@ namespace ft
                 pointer tmp_array;
                 size_type tmp_capacity = this->_MyCapacity;
                 this->_MyCapacity *= 2;
+                if (_MyCapacity > max_size()) throw std::length_error("no left space!!");
                 tmp_array = this->_MyAllocator.allocate(_MyCapacity);
+                if (!tmp_array)
+                    throw std::bad_alloc();
                 for (size_type i = 0; i < _Mysize; i++)
                     _MyAllocator.construct(&tmp_array[i], _array[i]);
                 _MyAllocator.construct(&tmp_array[_Mysize], val);
@@ -250,7 +286,10 @@ namespace ft
                 size_type tmp_capacity = (!_MyCapacity) ? 1 : _MyCapacity * 2;
                 _Mysize++;
                 size_type sign = 0;
+                if (tmp_capacity > max_size()) throw std::length_error("no left space!!");
                 pointer tmp_array = _MyAllocator.allocate(tmp_capacity);
+                if (!tmp_array)
+                    throw std::bad_alloc();
                 for (size_type i = 0; i < _Mysize; i++)
                 {
                     if (!_array)
@@ -307,7 +346,10 @@ namespace ft
             if (_MyCapacity < (_Mysize + n))
             {
                 size_type tmp_alloc = ((_MyCapacity * 2) < (_Mysize + n)) ? _Mysize + n : _MyCapacity * 2;
+                if (tmp_alloc > max_size()) throw std::length_error("no left space!!");
                 pointer tmp = _MyAllocator.allocate(tmp_alloc);
+                if (!tmp)
+                    throw std::bad_alloc();
                 size_type j = 0;
                 _Mysize += n;
                 for (size_type acc = 0; acc < _Mysize; acc++)
@@ -345,21 +387,28 @@ namespace ft
             if (_MyCapacity < (_Mysize + n))
             {
                 size_type tmp_alloc = ((_MyCapacity * 2) < (_Mysize + n)) ? _Mysize + n : _MyCapacity * 2;
+                if (tmp_alloc > max_size()) throw std::length_error("no left space!!");
                 pointer tmp = _MyAllocator.allocate(tmp_alloc);
+                if (!tmp)
+                    throw std::bad_alloc();
                 size_type j = 0;
-                _Mysize += n;
-                for (size_type acc = 0; acc < _Mysize; acc++)
+                size_type tmp_size = _Mysize + n;
+                for (size_type acc = 0; acc < tmp_size; acc++)
                 {
                     if (&*position == (_array + acc))
                     {
                         for (size_type i = 0; i < n; i++)
+                        {                            
                             _MyAllocator.construct(&tmp[j++], *(first++));
+                        }
                         if (!_array)
                             break;
                     }
-                    if (acc < (_Mysize - n))
+                    if (acc < (tmp_size - n))
                         _MyAllocator.construct(&tmp[j++], _array[acc]);
                 }
+                clear();
+                _Mysize = tmp_size;
                 _MyAllocator.deallocate(_array, _MyCapacity);
                 _MyCapacity = tmp_alloc;
                 _array = tmp;
@@ -376,8 +425,27 @@ namespace ft
         }
         iterator erase (iterator position)
         {
-            return (erase(position, position + 1));
+            value_type save;
+            iterator it;
+            for (size_type i = 0; i < _Mysize ; i++)
+            {
+                if (position == (_array + i))
+                {
+                    _MyAllocator.destroy(_array + i);
+                    for (size_type acc = i + 1; acc < _Mysize  ; acc++ ,i++)
+                    {
+                        _MyAllocator.construct(&_array[i], _array[acc]);
+                        if (position == (_array + i))
+                            it = iterator(_array + i);
+                    }
+                    _Mysize -= 1;
+                    return it;
+                }
+            }
+            return position;
+            // return (erase(position, position + 1));
         };
+        
         iterator erase (iterator first, iterator last)
         {            
             value_type save;
@@ -394,7 +462,7 @@ namespace ft
                             _MyAllocator.destroy(_array + acc);
                             acc += 1;
                         }
-                        _array[j++] = _array[acc];
+                        _MyAllocator.construct(&_array[j++], _array[acc]);
                     }
                     _Mysize -= n;
                     iterator it(_array + i);
@@ -403,7 +471,9 @@ namespace ft
             }
             return first;
         };
-        void clear(void) {
+        
+        void clear(void) 
+        {
             while (_Mysize)
             {
                 _Mysize--;
