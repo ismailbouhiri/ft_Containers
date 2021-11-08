@@ -6,7 +6,7 @@
 /*   By: ibouhiri <ibouhiri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 19:59:14 by ibouhiri          #+#    #+#             */
-/*   Updated: 2021/11/07 15:42:03 by ibouhiri         ###   ########.fr       */
+/*   Updated: 2021/11/08 17:06:07 by ibouhiri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 #define TREE_HPP
 
 # include "Bidirectional_iterator.hpp"
-
 
 template<class T>
 struct ft_node 
@@ -48,17 +47,22 @@ namespace ft
          node*              _root;
          compare           _value_compare;
          size_type         _size;
+         node*             _nullnode;
          
       public:
       
-         tree( void ): _size(0), _root(NULL) {};
-         tree( const allocator_type& alloc, const compare& comp ): _size(0), _root(NULL), _Myallocator(alloc), _value_compare(comp) {};
-         tree(const tree& Cobj) : _size(0), _root(NULL)  { *this = Cobj; };
+         tree( void ): _size(0), _root(NULL), _nullnode(create_node(NULL)) {};
+         tree( const allocator_type& alloc, const compare& comp ): _size(0), _root(NULL), _Myallocator(alloc), _value_compare(comp)
+         { _nullnode = create_node(NULL); }
+         tree(const tree& Cobj) : _size(0), _root(NULL), _nullnode(NULL) { *this = Cobj; };
          ~tree(void)
          {
+            if (_nullnode)
+               free_node(_nullnode);
             if (_root)
                ClearRoot(_root);
             _root = NULL;
+            _nullnode = NULL;
          }
          tree& operator=(const tree& cop)
          {
@@ -67,6 +71,9 @@ namespace ft
                ClearRoot(_root);
                _root = NULL;
             }
+            if (_nullnode)
+               free_node(_nullnode);
+            _nullnode = cop._nullnode;
             _root = cop._root;
             _value_compare = cop._value_compare;
             _size = cop._size;
@@ -74,29 +81,27 @@ namespace ft
          }
          
          size_type getSize(void) { return _size; }
+         node* getroot(void) { return _root; }
          
-         // void  tree_print(void)
-         // { print_helper("", _root, false); }
-         // void print_helper(const std::string &prefix, const node *_node, bool isLeft)
-			// {
-			// 	if (_node != NULL)
-			// 	{
-			// 		std::cout << prefix;
-
-			// 		std::cout << (isLeft ? "├──" : "└──");
-
-			// 		// print the value of the _node
-			// 		std::cout << _node->pair->first << " ";
-
-			// 		if (_node == this->_root)
-			// 			std::cout << "(Root)" << std::endl;
-			// 		else
-			// 			std::cout << (isLeft ? "(R)" : "(L)") << ((!_node->isblack) ? "(Red)" : "(Black)") << std::endl;
-			// 		// enter the next tree level - left and right branch
-			// 		print_helper(prefix + (isLeft ? "│   " : "    "), _node->rightChild, true);
-			// 		print_helper(prefix + (isLeft ? "│   " : "    "), _node->leftChild, false);
-			// 	}
-			// }
+         void  tree_print(void)
+         { print_helper("", _root, false); }
+         void print_helper(const std::string &prefix, const node *_node, bool isLeft)
+			{
+				if (_node != NULL)
+				{
+					std::cout << prefix;
+					std::cout << (isLeft ? "├──" : "└──");
+					// print the value of the _node
+					std::cout << _node->pair->first << " ";
+					if (_node == this->_root)
+						std::cout << "(Root)" << std::endl;
+					else
+						std::cout << (isLeft ? "(R)" : "(L)") << ((!_node->isblack) ? "(Red)" : "(Black)") << std::endl;
+					// enter the next tree level - left and right branch
+					print_helper(prefix + (isLeft ? "│   " : "    "), _node->rightChild, true);
+					print_helper(prefix + (isLeft ? "│   " : "    "), _node->leftChild, false);
+				}
+			}
          
 
          /////////////////////////////////// tree helpers for iterators ///////////////////////////
@@ -108,6 +113,16 @@ namespace ft
                tmp = tmp->leftChild;
             return tmp;
          }
+         
+         node* getlast( void )
+         {
+            node *tmp = _root;
+            while (tmp && tmp->rightChild)
+               tmp = tmp->rightChild;
+            return tmp;
+         }
+         node* getnullNode( void )
+         { return _nullnode; }
          //////////////////////////////////////// end helpers for iterators //////////////////////
 
          /////////////////////////////////// clear tree method ///////////////////////////////////
@@ -342,7 +357,7 @@ namespace ft
          /////////////////////////////////// end search methods  /////////////////////////////////
          
          /////////////////////////////// insert methods ///////////////////////////////////// 
-         node* create_node(const value_type& val)
+         node* create_node(const value_type* val)
          {
             node *new_node = node_allocator.allocate(1);
             new_node->pair = _Myallocator.allocate(1);
@@ -353,7 +368,10 @@ namespace ft
             new_node->leftChild = NULL;
             new_node->rightChild = NULL;
             new_node->parent = NULL;
-            _Myallocator.construct(new_node->pair, val);
+            if (val)
+               _Myallocator.construct(new_node->pair, *val);
+            else
+               new_node->pair = NULL;
             return new_node;
          }
          
@@ -528,14 +546,14 @@ namespace ft
          {
             if (!_root)
             {
-               _root = create_node(val);
+               _root = create_node(&val);
                _root->isblack = true;
                _size++;
                // return (make_pair(iterator(_root), true));
                return ;
             }
             _root->isblack = true;
-            add_node(_root, create_node(val));
+            add_node(_root, create_node(&val));
             _root->isblack = true;
          }
          

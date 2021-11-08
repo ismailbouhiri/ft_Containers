@@ -6,7 +6,7 @@
 /*   By: ibouhiri <ibouhiri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 09:43:39 by ibouhiri          #+#    #+#             */
-/*   Updated: 2021/11/07 15:43:02 by ibouhiri         ###   ########.fr       */
+/*   Updated: 2021/11/08 10:38:27 by ibouhiri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,14 +83,9 @@ namespace ft
 			tree_type		*_tree;
 		public :
 
-			iterator( void ) : iter(nullptr), _tree(nullptr) {}
-			
+			iterator( void ) : iter(nullptr), _tree(nullptr){}
 			iterator( pointer_type it,  tree_type* tree ) : iter(it), _tree(tree) {}
-			iterator(const iterator& CopyIter) 
-			{ 
-				this->iter = CopyIter.iter;
-				this->_tree = CopyIter._tree;
-			}
+			iterator(const iterator& CopyIter) : iter(CopyIter.iter), _tree(CopyIter._tree) {}
 			iterator& operator=( const iterator& it)
 			{
 				this->iter = it.iter;
@@ -98,40 +93,86 @@ namespace ft
 				return *this;
 			};
 			
-			~iterator(void){};
-			
+			~iterator( void ){};
+			// operator iterator<const T, tree_type>() const { return iterator<const T, tree_type>(iter); }
+
 			bool operator==(const iterator& it) const { return this->iter == it.iter; };
 			bool operator!=(const iterator& it) const { return this->iter != it.iter; };
-			
 			pair&	operator*(void) const { return *(iter->pair); };
-			
 			pair*	operator->(void) const { return iter->pair; };
+			iterator	operator++(int)
+			{ 
+				iterator old(*this);
+				if (iter == _tree->getlast())
+					iter = _tree->getnullNode();
+				else if (iter->isleftChild && !iter->leftChild && !iter->rightChild)
+					iter = iter->parent;
+				else if (iter->rightChild)
+					iter = _tree->getNodeInOrderSuccessor(iter);
+				else if (!iter->isleftChild && !iter->leftChild && !iter->rightChild)
+				{
+					while (!iter->isleftChild)
+						iter = iter->parent;
+					iter = iter->parent;
+				}
+				return old;
+			};
 
-			// iterator	operator++(int)
-			// { 
-			// 	iterator old(*this);
-			// 	iter++;
-			// 	return old;
-			// };
+			iterator 	&operator++(void)
+			{
+				if (iter == _tree->getlast())
+					iter = _tree->getnullNode();
+				else if (iter->isleftChild && !iter->leftChild && !iter->rightChild)
+					iter = iter->parent;
+				else if (iter->rightChild)
+					iter = _tree->getNodeInOrderSuccessor(iter);
+				else if (!iter->isleftChild && !iter->leftChild && !iter->rightChild)
+				{
+					while (!iter->isleftChild)
+						iter = iter->parent;
+					iter = iter->parent;
+				}
+				return *this;
+			};
 
-			// iterator 	operator--(int)
-			// { 
-			// 	iterator old(*this);
-			// 	iter--;
-			// 	return old; 
-			// };
+			iterator 	operator--(int)
+			{ 
+				iterator old(*this);
+				if (iter == _tree->getnullNode())
+					iter = _tree->getlast();
+				else if (iter->leftChild)
+					iter = _tree->getNodeInOrderPredecessor(iter);
+				else if (!iter->isleftChild)
+					iter = iter->parent;
+				else if (iter->isleftChild && !iter->leftChild && !iter->rightChild)
+				{
+					while (iter->isleftChild)
+						iter = iter->parent;
+					iter = iter->parent;
+				}
+				else
+					iter = iter->leftChild;
+				return old; 
+			};
 
-			// iterator 	&operator++(void)
-			// {
-			// 	iter++;
-			// 	return *this;
-			// };
-
-			// iterator 	&operator--(void)
-			// {
-			// 	iter--;
-			// 	return *this;
-			// };
+			iterator 	&operator--(void)
+			{
+				if (iter == _tree->getnullNode())
+					iter = _tree->getlast();
+				else if (iter->leftChild)
+					iter = _tree->getNodeInOrderPredecessor(iter);
+				else if (!iter->isleftChild)
+					iter = iter->parent;
+				else if (iter->isleftChild && !iter->leftChild && !iter->rightChild)
+				{
+					while (iter->isleftChild)
+						iter = iter->parent;
+					iter = iter->parent;
+				}
+				else
+					iter = iter->leftChild;
+				return *this;
+			};
 	};
 }
 
