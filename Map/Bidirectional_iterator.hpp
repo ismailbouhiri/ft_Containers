@@ -6,7 +6,7 @@
 /*   By: ibouhiri <ibouhiri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 09:43:39 by ibouhiri          #+#    #+#             */
-/*   Updated: 2021/11/08 10:38:27 by ibouhiri         ###   ########.fr       */
+/*   Updated: 2021/11/08 17:43:51 by ibouhiri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,15 +69,14 @@ namespace ft
 	{ return !(lhs < rhs); };
 	
 	
-	template < class T, class tree_type>
-	class iterator : public std::iterator<std::bidirectional_iterator_tag, T>
+	template < class node, class tree_type, class pair>
+	class iterator : public std::iterator<std::bidirectional_iterator_tag, pair>
 	{
 		public :
 			
-			typedef typename tree_type::value pair;
-			typedef T		value_type;
-			typedef T&		reference_type;
-			typedef T*		pointer_type;
+			typedef node		value_type;
+			typedef node&		reference_type;
+			typedef node*		pointer_type;
 		private:
 			pointer_type	iter;
 			tree_type		*_tree;
@@ -94,7 +93,7 @@ namespace ft
 			};
 			
 			~iterator( void ){};
-			// operator iterator<const T, tree_type>() const { return iterator<const T, tree_type>(iter); }
+			operator iterator<node, tree_type, const pair>() const { return iterator<node, tree_type, const pair>(iter, _tree); }
 
 			bool operator==(const iterator& it) const { return this->iter == it.iter; };
 			bool operator!=(const iterator& it) const { return this->iter != it.iter; };

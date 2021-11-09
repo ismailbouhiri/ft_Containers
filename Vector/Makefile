@@ -12,13 +12,11 @@
 
 COMPILER = clang++
 FILE = Vector_tests.cpp
-FLAGS = --std=c++98 -Wall -Wextra -Werror -fsanitize=address
+FLAGS = --std=c++98 -Wall -Wextra -Werror -fsanitize=undefined
 OUT = vector.out
 # FLAGS = --std=c++98 -Wall -Wextra -Werror
 
-vector: $(OUT)
-
-$(OUT): $(FILE)
+vector:
 	@$(COMPILER) $(FLAGS) $(FILE) -o $(OUT)
 
 map:

@@ -6,7 +6,7 @@
 /*   By: ibouhiri <ibouhiri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 19:59:14 by ibouhiri          #+#    #+#             */
-/*   Updated: 2021/11/08 17:06:07 by ibouhiri         ###   ########.fr       */
+/*   Updated: 2021/11/08 17:29:19 by ibouhiri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,11 +33,11 @@ namespace ft
    class tree
    {
       public:
-         typedef value_type                        value;              
-         typedef ft_node<value_type>               node;
-         typedef Alloc                             allocator_type;         
-         typedef size_t                            size_type;
-         typedef ft::iterator<node, tree>          iterator;
+         typedef value_type                                    value;              
+         typedef ft_node<value_type>                           node;
+         typedef Alloc                                         allocator_type;         
+         typedef size_t                                        size_type;
+         typedef ft::iterator<node, tree, value_type>          iterator;
       
       private:
          allocator_type    _Myallocator;

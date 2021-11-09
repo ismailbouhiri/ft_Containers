@@ -6,7 +6,7 @@
 /*   By: ibouhiri <ibouhiri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/25 11:05:20 by ibouhiri          #+#    #+#             */
-/*   Updated: 2021/11/08 17:07:31 by ibouhiri         ###   ########.fr       */
+/*   Updated: 2021/11/08 17:47:16 by ibouhiri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,10 +59,10 @@ namespace ft
 			tree_type _tree;
 			
 		public : 
-			typedef	ft::iterator<ft_node<value_type>, tree_type>				iterator;
-			typedef	ft::iterator<ft_node<const value_type>, tree_type>			const_iterator;
-			typedef	ft::reverse_iterator<iterator>								reverse_iterator;
-			typedef	ft::reverse_iterator<const_iterator>						const_reverse_iterator;
+			typedef	ft::iterator<ft_node<value_type>, tree_type, value_type>				iterator;
+			typedef	ft::iterator<ft_node<value_type>, tree_type, const value_type>			const_iterator;
+			typedef	ft::reverse_iterator<iterator>											reverse_iterator;
+			typedef	ft::reverse_iterator<const_iterator>									const_reverse_iterator;
 		public :
 
 			void	insert (const value_type& val)
@@ -84,8 +84,14 @@ namespace ft
 				return _tree.getSize();
 			}
 			
-			iterator begin( void ) { return iterator(_tree.getfirst(), &_tree); }
-			const_iterator begin( void ) const { return const_iterator(_tree.getfirst(), &_tree); }
+			iterator begin( void )
+			{ return iterator(_tree.getfirst(), &_tree); }
+			
+			const_iterator begin( void ) const 
+			{
+				
+				return const_iterator(_tree.getfirst(), &_tree); 
+			}
 
 			iterator end( void ) { return iterator(_tree.getnullNode(), &_tree); }
 			const_iterator end( void ) const { return const_iterator(_tree.getnullNode(), &_tree); }

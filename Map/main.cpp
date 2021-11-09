@@ -9,7 +9,7 @@ int main ()
   for (size_t i = 0; i < 19; i++)
     foo.insert(ft::make_pair(i, i));
 
-  ft::map<size_t, int>::const_iterator beg = foo.begin();;
+  ft::map<size_t, int>::const_iterator beg(foo.begin());
   // ft::map<size_t, int>::const_iterator end = foo.end();
 
   // beg++;

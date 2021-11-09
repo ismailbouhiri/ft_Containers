@@ -6,7 +6,7 @@
 /*   By: ibouhiri <ibouhiri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/08 11:02:57 by ibouhiri          #+#    #+#             */
-/*   Updated: 2021/11/08 17:08:41 by ibouhiri         ###   ########.fr       */
+/*   Updated: 2021/11/08 17:59:08 by ibouhiri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,27 +124,27 @@ namespace ft
 		
 	template <class Iterator>
 	bool operator== (const reverse_iterator<Iterator>& lhs, const reverse_iterator<Iterator>& rhs)
-	{ return (&*lhs == &*rhs); };
+	{ return (rhs._it == lhs._it); };
 	
 	template <class Iterator>
 	bool operator!= (const reverse_iterator<Iterator>& lhs, const reverse_iterator<Iterator>& rhs)
-	{ return ((lhs.base() - 1) != (rhs.base() - 1)); };
+	{ return (rhs._it != lhs._it); };
 	
 	template <class Iterator>
-	bool operator<  (const reverse_iterator<Iterator>& lhs, const reverse_iterator<Iterator>& rhs)
-	{ return !(*(lhs.base() - 1) > *(rhs.base() - 1)); };
+	bool operator<(const reverse_iterator<Iterator>& lhs, const reverse_iterator<Iterator>& rhs)
+	{ return (rhs._it < lhs._it); };
 	
 	template <class Iterator>
 	bool operator<= (const reverse_iterator<Iterator>& lhs, const reverse_iterator<Iterator>& rhs)
-	{ return (*(lhs.base() - 1) <= *(rhs.base() - 1)); };
+	{ return (rhs._it <= lhs._it); };
 	
 	template <class Iterator>
 	bool operator>  (const reverse_iterator<Iterator>& lhs, const reverse_iterator<Iterator>& rhs)
-	{ return (*(lhs.base() - 1) > *(rhs.base() - 1)); };
+	{ return (rhs._it > lhs._it); };
 
 	template <class Iterator>
 	bool operator>= (const reverse_iterator<Iterator>& lhs, const reverse_iterator<Iterator>& rhs)
-	{ return !(*(lhs.base() - 1) <= *(rhs.base() - 1)); };
+	{ return (rhs._it >= lhs._it); };
 	
 	template <class Iterator>
   	reverse_iterator<Iterator> operator+ ( typename reverse_iterator<Iterator>::difference_type n,
