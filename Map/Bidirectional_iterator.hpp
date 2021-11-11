@@ -6,7 +6,7 @@
 /*   By: ibouhiri <ibouhiri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 09:43:39 by ibouhiri          #+#    #+#             */
-/*   Updated: 2021/11/08 17:43:51 by ibouhiri         ###   ########.fr       */
+/*   Updated: 2021/11/10 10:28:27 by ibouhiri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,8 @@ namespace ft
 
 			iterator( void ) : iter(nullptr), _tree(nullptr){}
 			iterator( pointer_type it,  tree_type* tree ) : iter(it), _tree(tree) {}
-			iterator(const iterator& CopyIter) : iter(CopyIter.iter), _tree(CopyIter._tree) {}
+			iterator( const iterator& CopyIter) : iter(CopyIter.iter), _tree(CopyIter._tree) {}
+			// iterator( const iterator& CopyIter) {*this = CopyIter;}
 			iterator& operator=( const iterator& it)
 			{
 				this->iter = it.iter;
@@ -100,7 +101,7 @@ namespace ft
 			pair&	operator*(void) const { return *(iter->pair); };
 			pair*	operator->(void) const { return iter->pair; };
 			iterator	operator++(int)
-			{ 
+			{
 				iterator old(*this);
 				if (iter == _tree->getlast())
 					iter = _tree->getnullNode();

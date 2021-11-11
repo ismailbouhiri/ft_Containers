@@ -6,7 +6,7 @@
 /*   By: ibouhiri <ibouhiri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 19:59:14 by ibouhiri          #+#    #+#             */
-/*   Updated: 2021/11/08 17:29:19 by ibouhiri         ###   ########.fr       */
+/*   Updated: 2021/11/11 16:40:03 by ibouhiri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,10 +59,11 @@ namespace ft
          {
             if (_nullnode)
                free_node(_nullnode);
+            _nullnode = NULL;
             if (_root)
                ClearRoot(_root);
             _root = NULL;
-            _nullnode = NULL;
+            _size = 0;
          }
          tree& operator=(const tree& cop)
          {
@@ -71,18 +72,11 @@ namespace ft
                ClearRoot(_root);
                _root = NULL;
             }
-            if (_nullnode)
-               free_node(_nullnode);
-            _nullnode = cop._nullnode;
-            _root = cop._root;
             _value_compare = cop._value_compare;
-            _size = cop._size;
-               
+            _size = cop.getSize();
+            return *this;
          }
-         
-         size_type getSize(void) { return _size; }
-         node* getroot(void) { return _root; }
-         
+   
          void  tree_print(void)
          { print_helper("", _root, false); }
          void print_helper(const std::string &prefix, const node *_node, bool isLeft)
@@ -102,28 +96,57 @@ namespace ft
 					print_helper(prefix + (isLeft ? "│   " : "    "), _node->leftChild, false);
 				}
 			}
-         
+         size_type max_size( void ) { return _Myallocator.max_size(); }
+         /////////////////////////////////// getters and sitters //////////////////////////////////
 
-         /////////////////////////////////// tree helpers for iterators ///////////////////////////
-         
-         node* getfirst( void )
-         {
-            node *tmp = _root;
-            while (tmp && tmp->leftChild)
-               tmp = tmp->leftChild;
-            return tmp;
-         }
-         
-         node* getlast( void )
-         {
-            node *tmp = _root;
-            while (tmp && tmp->rightChild)
-               tmp = tmp->rightChild;
-            return tmp;
-         }
-         node* getnullNode( void )
-         { return _nullnode; }
-         //////////////////////////////////////// end helpers for iterators //////////////////////
+            // ------------------ setters -------------------------------
+            void  setsize(size_type s) { _size = s;};
+            void  setroot( node* root) { _root = root;};
+            // ------------------ getters -------------------------------
+            size_type getSize(void) const { return _size; }
+            
+            compare getvaluecomp(void) const { return _value_compare; }
+
+            node* getroot(void) const { return _root; }
+            
+            node* getfirst( void )
+            {
+               node *tmp = _root;
+               while (tmp && tmp->leftChild)
+                  tmp = tmp->leftChild;
+               return tmp;
+            }
+            
+            node* getlast( void )
+            {
+               node *tmp = _root;
+               while (tmp && tmp->rightChild)
+                  tmp = tmp->rightChild;
+               return tmp;
+            }
+            
+            node* getnullNode( void ) 
+            { return _nullnode; }
+            
+			   void swap_tree (tree* x)
+            {
+               compare c = x->_value_compare;
+               size_type size = x->_size;
+               node *save = x->_root;
+               allocator_type _alloc = x->_Myallocator;
+      
+               x->_value_compare = _value_compare;
+               x->_size = _size;
+               x->_root = this->_root;
+               x->_Myallocator = _Myallocator;
+
+               this->_root = save;
+               _size = size;
+               _value_compare = c;
+               _Myallocator = _alloc;
+            } 
+
+         /////////////////////////////////// end of  getters and sitters //////////////////////////
 
          /////////////////////////////////// clear tree method ///////////////////////////////////
          
@@ -132,23 +155,29 @@ namespace ft
             if (del_n == _root)
                _root = NULL;
             node *p = del_n->parent;
-            _Myallocator.destroy(del_n->pair);
-            if (p && del_n->isleftChild)
+            if (del_n->pair)
+            {
+               _Myallocator.destroy(del_n->pair);
+               _Myallocator.deallocate(del_n->pair, 1);
+            }
+            if (p && del_n && p->leftChild && del_n->isleftChild)
                p->leftChild = NULL;
-            else if (p && !del_n->isleftChild)
+            else if (p && del_n && p->rightChild && !del_n->isleftChild)
                p->rightChild = NULL;
-            _Myallocator.deallocate(del_n->pair, 1);
-            del_n->pair = NULL;
-            del_n->parent = NULL;
-            del_n->rightChild = NULL;
-            del_n->leftChild = NULL;
-            node_allocator.deallocate(del_n, 1);
+            if (del_n)
+            {
+               del_n->pair = NULL;
+               del_n->parent = NULL;
+               del_n->rightChild = NULL;
+               del_n->leftChild = NULL;
+               node_allocator.deallocate(del_n, 1);
+            }
             del_n = NULL;
          }
          
          void ClearRoot( node* del_n )
          {
-            if (del_n)
+            if (!del_n)
                return ;
                
             ClearRoot(del_n->leftChild);
@@ -157,7 +186,6 @@ namespace ft
          }
 
          ///////////////////////////////////clear tree method end /////////////////////////////////////
-
          /////////////////////////////////// DELETE method ///////////////////////////////////////
          
          // fonction check if the far sibling child of _n is black and near sibling child of _n is red
@@ -348,10 +376,10 @@ namespace ft
             return (current);
          }
          
-         node&  search(const key_type& key)
+         node*  search(const key_type& key)
          {
                node *ret = search_key(_root, key);
-               return ((ret) ? ret : NULL);
+               return ( ret ) ? ret : NULL;
          }
          
          /////////////////////////////////// end search methods  /////////////////////////////////
@@ -360,7 +388,8 @@ namespace ft
          node* create_node(const value_type* val)
          {
             node *new_node = node_allocator.allocate(1);
-            new_node->pair = _Myallocator.allocate(1);
+            if (val)
+               new_node->pair = _Myallocator.allocate(1);
             
             new_node->isblack = false;
             new_node->isleftChild = false;
@@ -395,11 +424,11 @@ namespace ft
                }
                else {
                   tmp->isleftChild = false;
-                  tmp->parent->leftChild = tmp;
+                  tmp->parent->rightChild = tmp;
                }
             }
-            tmp->leftChild = Gp_node;
-            Gp_node->isleftChild = true;
+            tmp->rightChild = Gp_node;
+            Gp_node->isleftChild = false;
             Gp_node->parent = tmp;         
          }
 
@@ -446,8 +475,10 @@ namespace ft
                   rightRotation(_node->parent);
                   leftRotation(_node->parent);
                   _node->isblack = true;
-                  _node->rightChild->isblack = false;
-                  _node->leftChild->isblack = false;
+                  if (_node->rightChild)
+                     _node->rightChild->isblack = false;
+                  if (_node->leftChild)
+                     _node->leftChild->isblack = false;
                }
             else
                if (!_node->parent->isleftChild)
@@ -481,7 +512,7 @@ namespace ft
                   return ;
                }
             else
-               if (_node->parent->parent->leftChild == NULL || _node->parent->parent->leftChild->isblack) // if aunt is black = go to rotate
+               if (_node->parent->parent->leftChild == NULL || _node->parent->parent->leftChild->isblack) // if uncle is black = go to rotate
                   return rotate(_node);
                else
                {
@@ -495,7 +526,7 @@ namespace ft
          
          void  checkcolor(node* _node)
          {
-            if (_node == _root)
+            if ( !_node || _node == _root)
                return ;
             if (_node && !_node->isblack && _node->parent && !_node->parent->isblack)
                FixTree(_node);
@@ -503,12 +534,10 @@ namespace ft
          }
 
 
-         // void add_node( node* current, node* new_node )
          pair<iterator, bool>  add_node(  node* current, node* new_node )
          {
             if (current && _value_compare(current->pair->first, new_node->pair->first))
             {
-               // std::cout << "current = " << current->pair->first << "        " << new_node->pair->first<< std::endl;
                if (!current->rightChild)
                {
                   current->rightChild = new_node;
@@ -516,7 +545,7 @@ namespace ft
                   new_node->isleftChild = false;
                   _size++;              
                   checkcolor(new_node);
-                  return (ft::make_pair(iterator(current, this), true));
+                  return (ft::make_pair(iterator(new_node, this), true));
                }
                return (add_node(current->rightChild, new_node));
             }
@@ -529,32 +558,30 @@ namespace ft
                   new_node->isleftChild = true;
                   _size++;
                   checkcolor(new_node);
-                  return (ft::make_pair(iterator(current, this), true));
-                  // return ;
+                  return (ft::make_pair(iterator(new_node, this), true));
                }
                return (add_node(current->leftChild, new_node));
             }
             _Myallocator.deallocate(new_node->pair, 1);
             node_allocator.deallocate(new_node, 1);
             return (ft::make_pair(iterator(current, this), false));
-            // return ;
          }
          
-         // pair<std::iterator,bool>  insert(const value_type& val)
          
-         void  insert(const value_type& val)
+         // void  insert(const value_type& val)
+         pair<iterator,bool>  insert(const value_type& val)
          {
             if (!_root)
             {
                _root = create_node(&val);
                _root->isblack = true;
                _size++;
-               // return (make_pair(iterator(_root), true));
-               return ;
+               return (ft::make_pair(iterator(_root, this), true));
             }
             _root->isblack = true;
-            add_node(_root, create_node(&val));
+            pair<iterator,bool> it = add_node(_root, create_node(&val));
             _root->isblack = true;
+            return it;
          }
          
          /////////////////////////////////// end methods insert //////////////////////////////////    
