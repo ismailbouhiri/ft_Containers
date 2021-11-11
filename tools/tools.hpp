@@ -6,7 +6,7 @@
 /*   By: ibouhiri <ibouhiri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/08 11:02:57 by ibouhiri          #+#    #+#             */
-/*   Updated: 2021/11/08 17:59:08 by ibouhiri         ###   ########.fr       */
+/*   Updated: 2021/11/10 11:06:43 by ibouhiri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ namespace ft
 			iterator_type  _it;
 		public :
 			
-			reverse_iterator(void) : _it(nullptr){};
+			reverse_iterator(void)  {};
 			
 			explicit reverse_iterator (iterator_type it) : _it(it) {};
 			
