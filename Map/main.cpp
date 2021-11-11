@@ -11,24 +11,44 @@ struct classcomp {
 int main ()
 {
 
-  std::map<char,int> mymap;
-  char c;
-  size_t ret;
 
-  mymap ['a']=101;
-  mymap ['c']=202;
-  mymap ['f']=303;
+  // ft::map<char,int> mymap;
+  // char c;
+  // size_t ret;
 
-  for (c='a'; c<'h'; c++)
-  {
-    std::cout << c;
-    if ((ret = mymap.count(c))>0)
-      std::cout << " is an element of mymap.\n";
-    else 
-      std::cout << " is not an element of mymap.\n";
-    std::cout << "c = [ " << c << " ] ret  = " << ret  << std::endl;
-  }
+  // mymap ['a']=101;
+  // mymap ['c']=202;
+  // mymap ['f']=303;
 
+  // for (c='a'; c<'h'; c++)
+  // {
+  //   std::cout << c;
+  //   if ((ret = mymap.count(c))>0)
+  //     std::cout << " is an element of mymap.\n";
+  //   else 
+  //     std::cout << " is not an element of mymap.\n";
+  //   std::cout << "c = [ " << c << " ] ret  = [ " << ret << " ] " << std::endl;
+
+
+  // }
+  //   std::cout << "------------------------" << std::endl;
+  //   std::map<char,int> mymap1;
+  // char d;
+  // size_t e;
+
+  // mymap1 ['a']=101;
+  // mymap1 ['c']=202;
+  // mymap1 ['f']=303;
+
+  // for (d='a'; d<'h'; d++)
+  // {
+  //   std::cout << d;
+  //   if ((e = mymap1.count(d))>0)
+  //     std::cout << " is an element of mymap1.\n";
+  //   else 
+  //     std::cout << " is not an element of mymap1.\n";
+  //   std::cout << "c = [ " << d << " ] ret  = [ " << e << " ] " << std::endl;
+  // }
   // ft::map<char,int> mymap;
 
   // ft::map<char,int>::key_compare mycomp = mymap.key_comp();

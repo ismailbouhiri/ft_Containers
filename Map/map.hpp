@@ -6,7 +6,7 @@
 /*   By: ibouhiri <ibouhiri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/25 11:05:20 by ibouhiri          #+#    #+#             */
-/*   Updated: 2021/11/11 16:52:03 by ibouhiri         ###   ########.fr       */
+/*   Updated: 2021/11/11 20:08:16 by ibouhiri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,7 @@ namespace ft
 			typedef	ft::iterator<ft_node<value_type>, tree_type, const value_type>			const_iterator;
 			typedef	ft::reverse_iterator<iterator>											reverse_iterator;
 			typedef	ft::reverse_iterator<const_iterator>									const_reverse_iterator;
+         	typedef ft_node<value_type>                         							node;
 		private:
 			key_compare _compare;
 			allocator_type _allocator;
@@ -207,10 +208,13 @@ namespace ft
 			const_iterator find (const key_type& k) const
 			{ return const_iterator(_tree.search(k), &_tree); }
 
-			// size_type count (const key_type& k) const
-			// {
-				
-			// }
+			size_type count (const key_type& k) const
+			{
+				node *ret = this->_tree.search(k);
+				if (ret)
+					return (1);
+				return (0);		
+			}
 
 
 			//////////////////// end Operations: ///////////////

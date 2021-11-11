@@ -6,7 +6,7 @@
 /*   By: ibouhiri <ibouhiri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 19:59:14 by ibouhiri          #+#    #+#             */
-/*   Updated: 2021/11/11 16:40:03 by ibouhiri         ###   ########.fr       */
+/*   Updated: 2021/11/11 20:09:15 by ibouhiri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -365,7 +365,7 @@ namespace ft
 
          /////////////////////////////////// search method ///////////////////////////////////////
          
-         node*  search_key( node* current, const key_type& key)
+         node*  search_key( node* current, const key_type& key) const
          {
             if (!current)
                return (NULL);
@@ -376,7 +376,7 @@ namespace ft
             return (current);
          }
          
-         node*  search(const key_type& key)
+         node*  search(const key_type& key) const 
          {
                node *ret = search_key(_root, key);
                return ( ret ) ? ret : NULL;
