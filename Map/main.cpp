@@ -1,6 +1,6 @@
 #include <utility>      // std::pair
 #include <iostream>     // std::cout
-#include "map.hpp"
+#include "Map.hpp"
 # include <map>
 bool fncomp (char lhs, char rhs) {return lhs<rhs;}
 
@@ -10,7 +10,173 @@ struct classcomp {
 };
 int main ()
 {
+  std::map<int, std::string> m1;
+  ft::Map<int, std::string> ft_m1;
 
+  for (size_t i = 0; i < 10; i++)
+  {
+      m1.insert(std::make_pair(i, "string2"));
+      ft_m1.insert(ft::make_pair(i, "string2"));
+  }
+
+  // std::map<int, std::string> const m2(m1.rbegin(), m1.rend());
+  ft::Map<int, std::string> const ft_m2(ft_m1.rbegin(), ft_m1.rend());
+   
+  /*-----------------------------------------------------*/
+  /*------------------ ft::Maps ---------------------*/
+  /*----------------------------------------------------*/
+  /*------------------ strings to store the results ----*/
+  std::string res, ft_res, c_res, c_ft_res;
+  /*----------------------------------------------------*/
+  // for (std::map<int, std::string>::reverse_iterator it = m1.rbegin(); it != m1.rend(); ++it) // fill res from m1
+  //     res += it->second;
+  // for (std::map<int, std::string>::const_reverse_iterator rit = m2.rbegin(); rit != m2.rend(); ++rit) // fill c_res from const m1
+  //     c_res += rit->second;
+    
+  // for (ft::Map<int, std::string>::reverse_iterator it = ft_m1.rbegin(); it != ft_m1.rend(); ++it) // fill ft_res from ft_m1
+  //     ft_res += it->second;
+  // ft_mx2.print_h();
+  exit(0);
+  for (ft::Map<int, std::string>::const_reverse_iterator rit = ft_m2.rbegin(); rit != ft_m2.rend(); ++rit)
+  {
+      c_ft_res += rit->second;
+  } // fill c_ft_res from const ft_m1
+  
+  int arr[] = {12, 82, 37, 64, 15};
+  
+  ft::Map<int, int> end_test;
+  for(size_t i = 0; i < 5; ++i)
+      end_test.insert(ft::make_pair(arr[i], i));
+  
+  ft::Map<int, int>::reverse_iterator rit1 = end_test.rend();
+  rit1--;
+  // std::map<int, std::string> m1;
+  // std::map<int, std::string> m2;
+  // ft::Map<int, std::string> ft_m1;
+  // ft::Map<int, std::string> ft_m2;
+
+  // for (int i = 0; i < 10; ++i)
+  // {
+  //     m1.insert(std::make_pair(i, "string2"));
+  //     ft_m1.insert(ft::make_pair(i, "string2"));
+  // }
+  // m1 = m2;
+  // /*-----------------------------------------------------*/
+  // /*------------------ ft::Map ---------------------*/
+  // ft_m1 = ft_m2;
+
+  // /*----------------------------------------------------*/
+  // /*------------------ strings to store the results ----*/
+  // std::string res, ft_res;
+  // /*----------------------------------------------------*/
+  // for (std::map<int, std::string>::iterator it = m1.begin(); it != m1.end(); ++it) // fill res from m1
+  //     res += it->second;
+  // for (ft::Map<int, std::string>::iterator it = ft_m1.begin(); it != ft_m1.end(); ++it)
+  // {
+  //     ft_res += it->second;
+  // } // fill ft_res from ft_m1
+  // std::cout << "iter" << std::endl;
+  // std::map<int, std::string> m1;
+  // ft::Map<int, std::string> ft_m1;
+
+  // for (size_t i = 0; i < 10; i++)
+  // {
+  //     m1.insert(std::make_pair(i, "string2"));
+  //     ft_m1.insert(ft::make_pair(i, "string2"));
+  // }
+
+  // std::map<int, std::string> const m2(m1.begin(), m1.end());
+  // ft::Map<int, std::string>  const ft_m2(ft_m1.begin(), ft_m1.end());
+
+  /*-----------------------------------------------------*/
+  /*------------------ ft::Maps ---------------------*/
+  /*----------------------------------------------------*/
+  /*------------------ strings to store the results ----*/
+  // std::string res, ft_res, c_res, c_ft_res;
+  /*----------------------------------------------------*/
+  // for (std::map<int, std::string>::iterator it = m1.begin(); it != m1.end(); ++it) // fill res from m1
+  //     res += it->second;
+  // for (std::map<int, std::string>::const_iterator rit = m2.begin(); rit != m2.end(); ++rit) // fill c_res from const m1
+  //     c_res += rit->second;
+
+  // ft::Map<int, std::string>::const_iterator rit = ft_m2.begin();
+  // for (ft::Map<int, std::string>::iterator it = ft_m1.begin(); it != ft_m1.end(); ++it) // fill ft_res from ft_m1
+  //     ft_res += it->second;
+  // for (ft::Map<int, std::string>::const_iterator rit = ft_m2.begin(); rit != ft_m2.end(); ++rit) // fill c_ft_res from const ft_m1
+  //     c_ft_res += rit->second;
+  
+  // int arr[] = {12, 82, 37, 64, 15};
+  // ft::Map<int, int> end_test;
+  // for(size_t i = 0; i < 5; ++i)
+  //     end_test.insert(ft::make_pair(arr[i], i));
+  // ft::Map<int, int>::iterator eit = end_test.end();
+  // eit--;
+  // ft::Map<char,int>::const_iterator con = foo.begin();
+  // std::cout << "foo contains:\n";
+  // for (ft::Map<char,int>::iterator it=foo.begin(); it!=foo.end(); ++it)
+  //   std::cout << it->first << " => " << it->second << '\n';
+
+  // std::cout << "bar contains:\n";
+  // for (ft::Map<char,int>::iterator it=bar.begin(); it!=bar.end(); ++it)
+  //   std::cout << it->first << " => " << it->second << '\n';
+  // std::map<char,int> mymap;
+
+  // mymap['e']=10;
+  // mymap['f']=20;
+  // mymap['c']=30;
+
+  // std::pair<std::map<char,int>::iterator,std::map<char,int>::iterator> ret;
+  // ret = mymap.equal_range('b');
+
+  // std::cout << "lower bound points to: ";
+  // std::cout << ret.first->first << " => " << ret.first->second << '\n';
+
+  // std::cout << "upper bound points to: ";
+  // std::cout << ret.second->first << " => " << ret.second->second << '\n';
+  
+  // std::cout << "==============\n";
+
+  // ft::Map<char,int> ft_myMap;
+
+  // ft_myMap['a']=10;
+  // ft_myMap['b']=20;
+  // ft_myMap['c']=30;
+
+  // ft::pair<ft::Map<char,int>::iterator,ft::Map<char,int>::iterator> ft_ret;
+  // ft_ret = ft_myMap.equal_range('b');
+
+  // std::cout << "lower bound points to: ";
+  // std::cout << ft_ret.first->first << " => " << ft_ret.first->second << '\n';
+
+  // std::cout << "upper bound points to: ";
+  // std::cout << ft_ret.second->first << " => " << ft_ret.second->second << '\n';
+
+  // std::Map<int,int> mymap;
+  // std::map<int,int>::iterator itlow,itup;
+  // ft::map<int,int> ft_mymap;
+  // ft::map<int,int>::iterator ft_itlow,ft_itup;
+
+  // for (size_t i = 0; i <37;i+=2)
+  //   mymap[i] = 20;
+  // for (size_t i = 0; i <37;i+=2)
+  //   ft_mymap[i] = 20;
+  // // std::cout << "---------------\n";
+  // // mymap.print_h();
+  // itlow = mymap.lower_bound (36);  // itlow points to b
+  // itup = mymap.upper_bound (22);   // itup points to e (not d!)
+  // std::cout << "itlow = " << itlow->first << " => " << itlow->second << '\n';
+  // std::cout << "itup = " << itup->first << " => " << itup->second << '\n';
+
+  // ft_itlow = ft_mymap.lower_bound (36);  // ft_itlow points to b
+  // ft_itup = ft_mymap.upper_bound (22);   // ft_itup points to e (not d!)
+  // std::cout << "ft_itlow = " << ft_itlow->first << " => " << ft_itlow->second << '\n';
+  // std::cout << "ft_itup = " << ft_itup->first << " => " << ft_itup->second << '\n';
+
+  // ft_mymap.erase(itlow,itup);        // erases [itlow,itup)
+
+  // // print content:
+  // for (ft::map<int,int>::iterator it=mymap.begin(); it!=mymap.end(); ++it)
+  //   std::cout << it->first << " => " << it->second << '\n';
 
   // ft::map<char,int> mymap;
   // char c;
@@ -277,6 +443,6 @@ int main ()
   // foo.print_h();
   // std::cout << foo.size() << std::endl;
 
-  system("leaks a.out");
+  // system("leaks a.out");
   return 0;
 }

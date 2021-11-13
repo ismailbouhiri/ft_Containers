@@ -6,12 +6,12 @@
 /*   By: ibouhiri <ibouhiri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 09:43:39 by ibouhiri          #+#    #+#             */
-/*   Updated: 2021/11/10 10:28:27 by ibouhiri         ###   ########.fr       */
+/*   Updated: 2021/11/13 18:45:10 by ibouhiri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef ITERATOR_HPP
-#define ITERATOR_HPP
+#ifndef BIDIRECTIONAL_ITERATOR_HPP
+#define BIDIRECTIONAL_ITERATOR_HPP
 
 #include <iostream>
 
@@ -70,7 +70,7 @@ namespace ft
 	
 	
 	template < class node, class tree_type, class pair>
-	class iterator : public std::iterator<std::bidirectional_iterator_tag, pair>
+	class map_iterator : public std::iterator<std::bidirectional_iterator_tag, pair>
 	{
 		public :
 			
@@ -82,98 +82,154 @@ namespace ft
 			tree_type		*_tree;
 		public :
 
-			iterator( void ) : iter(nullptr), _tree(nullptr){}
-			iterator( pointer_type it,  tree_type* tree ) : iter(it), _tree(tree) {}
-			iterator( const iterator& CopyIter) : iter(CopyIter.iter), _tree(CopyIter._tree) {}
-			// iterator( const iterator& CopyIter) {*this = CopyIter;}
-			iterator& operator=( const iterator& it)
+			map_iterator( void ) : iter(nullptr), _tree(nullptr){}
+			map_iterator(  pointer_type it, tree_type* etree ) : iter(it), _tree(etree) {}
+			map_iterator( const map_iterator& CopyIter) { *this = CopyIter;}
+			map_iterator& operator=( const map_iterator& it)
 			{
 				this->iter = it.iter;
 				_tree = it._tree;
 				return *this;
 			};
 			
-			~iterator( void ){};
-			operator iterator<node, tree_type, const pair>() const { return iterator<node, tree_type, const pair>(iter, _tree); }
+			~map_iterator( void ){};
+			operator map_iterator<node, tree_type, const pair>() const { return map_iterator<node, tree_type, const pair>(iter, _tree); }
 
-			bool operator==(const iterator& it) const { return this->iter == it.iter; };
-			bool operator!=(const iterator& it) const { return this->iter != it.iter; };
+			bool operator==(const map_iterator& it) const { return this->iter == it.iter; };
+			bool operator!=(const map_iterator& it) const { return this->iter != it.iter; };
 			pair&	operator*(void) const { return *(iter->pair); };
 			pair*	operator->(void) const { return iter->pair; };
-			iterator	operator++(int)
+			
+			map_iterator	&operator ++()
 			{
-				iterator old(*this);
 				if (iter == _tree->getlast())
+				{
 					iter = _tree->getnullNode();
-				else if (iter->isleftChild && !iter->leftChild && !iter->rightChild)
+				}
+				else if (!iter->parent)
+				{
+					if (!iter->rightChild) iter = iter->parent;
+					else iter = _tree->getNodeInOrderSuccessor(iter);
+				}
+				else if (iter == iter->parent->leftChild && !iter->rightChild)
 					iter = iter->parent;
 				else if (iter->rightChild)
 					iter = _tree->getNodeInOrderSuccessor(iter);
-				else if (!iter->isleftChild && !iter->leftChild && !iter->rightChild)
+				else
 				{
-					while (!iter->isleftChild)
-						iter = iter->parent;
-					iter = iter->parent;
-				}
-				return old;
-			};
-
-			iterator 	&operator++(void)
-			{
-				if (iter == _tree->getlast())
-					iter = _tree->getnullNode();
-				else if (iter->isleftChild && !iter->leftChild && !iter->rightChild)
-					iter = iter->parent;
-				else if (iter->rightChild)
-					iter = _tree->getNodeInOrderSuccessor(iter);
-				else if (!iter->isleftChild && !iter->leftChild && !iter->rightChild)
-				{
-					while (!iter->isleftChild)
-						iter = iter->parent;
-					iter = iter->parent;
+					node *x = iter;
+					while (x->parent && x == x->parent->rightChild)
+						x = x->parent;
+					iter = x->parent;
 				}
 				return *this;
-			};
-
-			iterator 	operator--(int)
-			{ 
-				iterator old(*this);
-				if (iter == _tree->getnullNode())
-					iter = _tree->getlast();
-				else if (iter->leftChild)
-					iter = _tree->getNodeInOrderPredecessor(iter);
-				else if (!iter->isleftChild)
-					iter = iter->parent;
-				else if (iter->isleftChild && !iter->leftChild && !iter->rightChild)
-				{
-					while (iter->isleftChild)
-						iter = iter->parent;
-					iter = iter->parent;
-				}
-				else
-					iter = iter->leftChild;
-				return old; 
-			};
-
-			iterator 	&operator--(void)
+			}
+			map_iterator	operator ++(int) { map_iterator tmp = *this; ++(*this); return tmp; }
+			map_iterator	&operator --(void)
 			{
 				if (iter == _tree->getnullNode())
+				{
 					iter = _tree->getlast();
+				}
+				else if (!iter->parent)
+				{
+					if (!iter->leftChild) 
+						iter = iter->parent;
+					else
+						iter = _tree->getNodeInOrderPredecessor(iter);
+				}
+				else if (iter == iter->parent->rightChild && !iter->leftChild)
+					iter = iter->parent;
 				else if (iter->leftChild)
 					iter = _tree->getNodeInOrderPredecessor(iter);
-				else if (!iter->isleftChild)
-					iter = iter->parent;
-				else if (iter->isleftChild && !iter->leftChild && !iter->rightChild)
-				{
-					while (iter->isleftChild)
-						iter = iter->parent;
-					iter = iter->parent;
-				}
 				else
-					iter = iter->leftChild;
+				{
+					node *x = iter;
+					while (x->parent && x == x->parent->leftChild)
+						x = x->parent;
+					iter = x->parent;
+				}
 				return *this;
-			};
+			}
+			map_iterator	operator --(int) { map_iterator tmp = *this; --(*this); return tmp; }
+
+			// map_iterator	operator++(int)
+			// {
+			// 	map_iterator old(*this);
+			// 	if (iter == _tree->getlast())
+			// 		iter = _tree->getnullNode();
+			// 	else if (iter->isleftChild && !iter->leftChild && !iter->rightChild)
+			// 		iter = iter->parent;
+			// 	else if (iter->rightChild)
+			// 		iter = _tree->getNodeInOrderSuccessor(iter);
+			// 	else if (!iter->isleftChild && !iter->leftChild && !iter->rightChild)
+			// 	{
+			// 		while (!iter->isleftChild)
+			// 			iter = iter->parent;
+			// 		iter = iter->parent;
+			// 	}
+			// 	return old;
+			// };
+
+			// map_iterator 	&operator++(void)
+			// {
+			// 	if (iter == _tree->getlast())
+			// 		iter = _tree->getnullNode();
+			// 	else if (iter->isleftChild && !iter->leftChild && !iter->rightChild)
+			// 		iter = iter->parent;
+			// 	else if (iter->rightChild)
+			// 		iter = _tree->getNodeInOrderSuccessor(iter);
+			// 	else if (!iter->isleftChild && !iter->leftChild && !iter->rightChild)
+			// 	{
+			// 		while (!iter->isleftChild)
+			// 			iter = iter->parent;
+			// 		iter = iter->parent;
+			// 	}
+			// 	return *this;
+			// };
+			// map_iterator 	operator--(int)
+			// {
+			// 	map_iterator old(*this);
+			// 	if (iter == _tree->getnullNode())
+			// 		iter = _tree->getlast();
+			// 	else if (iter->leftChild)
+			// 		iter = _tree->getNodeInOrderPredecessor(iter);
+			// 	else if (!iter->isleftChild)
+			// 		iter = iter->parent;
+			// 	else if (iter->isleftChild && !iter->leftChild && !iter->rightChild)
+			// 	{
+			// 		while (iter->isleftChild)
+			// 			iter = iter->parent;
+			// 		iter = iter->parent;
+			// 	}
+			// 	else
+			// 		iter = iter->leftChild;
+			// 	return old; 
+			// };
+
+			// map_iterator 	&operator--(void)
+			// {
+			// 	if (iter == _tree->getnullNode())
+			// 		iter = _tree->getlast();
+			// 	else if (iter->leftChild)
+			// 		iter = _tree->getNodeInOrderPredecessor(iter);
+			// 	else if (!iter->isleftChild)
+			// 		iter = iter->parent;
+			// 	else if (iter->isleftChild && !iter->leftChild && !iter->rightChild)
+			// 	{
+			// 		iter = iter->parent;
+			// 		while (iter->parent && !iter->isleftChild)
+			// 			iter = iter->parent;
+			// 	}
+			// 	else
+			// 		iter = iter->leftChild;
+			// 	return *this;
+			// };
 	};
+	template <class N1, class T1, class P1, class N2, class T2, class P2>
+	bool	operator ==(const map_iterator<N1,T1,P1> &x, const map_iterator<N2,T2,P2> &y) { return x.iter == y.iter; }
+	template <class N1, class T1, class P1, class N2, class T2, class P2>
+	bool	operator !=(const map_iterator<N1,T1,P1> &x, const map_iterator<N2,T2,P2> &y) { return !(x == y); }
 }
 
 #endif

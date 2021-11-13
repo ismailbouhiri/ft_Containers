@@ -6,7 +6,7 @@
 /*   By: ibouhiri <ibouhiri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 19:59:14 by ibouhiri          #+#    #+#             */
-/*   Updated: 2021/11/11 20:09:15 by ibouhiri         ###   ########.fr       */
+/*   Updated: 2021/11/13 18:18:55 by ibouhiri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ namespace ft
          typedef ft_node<value_type>                           node;
          typedef Alloc                                         allocator_type;         
          typedef size_t                                        size_type;
-         typedef ft::iterator<node, tree, value_type>          iterator;
+         typedef ft::map_iterator<node, tree, value_type>      iterator;
       
       private:
          allocator_type    _Myallocator;
@@ -51,10 +51,10 @@ namespace ft
          
       public:
       
-         tree( void ): _size(0), _root(NULL), _nullnode(create_node(NULL)) {};
-         tree( const allocator_type& alloc, const compare& comp ): _size(0), _root(NULL), _Myallocator(alloc), _value_compare(comp)
+         tree( void ):  _root(NULL), _size(0), _nullnode(create_node(NULL)) {};
+         tree( const allocator_type& alloc, const compare& comp ): _root(NULL), _size(0), _Myallocator(alloc), _value_compare(comp)
          { _nullnode = create_node(NULL); }
-         tree(const tree& Cobj) : _size(0), _root(NULL), _nullnode(NULL) { *this = Cobj; };
+         tree(const tree& Cobj) : _size(0), _root(NULL), _nullnode(NULL) { *this = Cobj; };         
          ~tree(void)
          {
             if (_nullnode)
@@ -73,13 +73,13 @@ namespace ft
                _root = NULL;
             }
             _value_compare = cop._value_compare;
-            _size = cop.getSize();
+            _size = cop._size;;
             return *this;
          }
    
-         void  tree_print(void)
+         void  tree_print(void) const 
          { print_helper("", _root, false); }
-         void print_helper(const std::string &prefix, const node *_node, bool isLeft)
+         void print_helper(const std::string &prefix, const node *_node, bool isLeft) const
 			{
 				if (_node != NULL)
 				{
@@ -88,15 +88,79 @@ namespace ft
 					// print the value of the _node
 					std::cout << _node->pair->first << " ";
 					if (_node == this->_root)
+               
 						std::cout << "(Root)" << std::endl;
 					else
+               { 
+                  std::cout << " : isleft(" << _node->isleftChild << ") |";
 						std::cout << (isLeft ? "(R)" : "(L)") << ((!_node->isblack) ? "(Red)" : "(Black)") << std::endl;
+
+               }
 					// enter the next tree level - left and right branch
 					print_helper(prefix + (isLeft ? "│   " : "    "), _node->rightChild, true);
 					print_helper(prefix + (isLeft ? "│   " : "    "), _node->leftChild, false);
 				}
 			}
-         size_type max_size( void ) { return _Myallocator.max_size(); }
+         
+         size_type max_size( void ) const { return _Myallocator.max_size(); }
+         
+         node* lower(const key_type& k) const 
+         {
+            node *tmp = _root;
+            node *search_n = search(k);
+            if (search_n && search_n != _nullnode)
+               return ( search_n );
+            while (tmp)
+            {
+               if (_value_compare(tmp->pair->first, k))
+               {
+                  if (tmp->rightChild)
+                     tmp = tmp->rightChild;
+                  else
+                     return tmp->parent;
+                  continue ;
+               }
+               else if (_value_compare(k, tmp->pair->first))
+               {
+                  if (tmp->leftChild)
+                     tmp = tmp->leftChild;
+                  else
+                     return tmp;
+                  continue;
+               }
+            }
+            return tmp;
+         }
+
+         node *upper(const key_type& k) const 
+         {
+            node *tmp = _root;
+            node *last = getlast();
+            while (tmp)
+            {
+               if (tmp->pair->first == k && tmp == last)
+                  return (_nullnode);
+               else if (tmp->pair->first != k && !tmp->rightChild && !tmp->leftChild)
+                  return tmp;
+               else if (_value_compare(tmp->pair->first, k))
+               {
+                  tmp = tmp->rightChild;
+                  continue;
+               }
+               else if (_value_compare(k, tmp->pair->first))
+               {
+                  tmp = tmp->leftChild;
+                  continue;
+               }
+               else
+                  if (tmp->rightChild)
+                     tmp = tmp->rightChild;
+                  else
+                     return (tmp->parent);
+            }
+            return (tmp);    
+         }
+         
          /////////////////////////////////// getters and sitters //////////////////////////////////
 
             // ------------------ setters -------------------------------
@@ -109,15 +173,17 @@ namespace ft
 
             node* getroot(void) const { return _root; }
             
-            node* getfirst( void )
+            node* getfirst( void ) const
             {
                node *tmp = _root;
+               if (!tmp)
+                  return _nullnode;
                while (tmp && tmp->leftChild)
                   tmp = tmp->leftChild;
                return tmp;
             }
             
-            node* getlast( void )
+            node* getlast( void ) const
             {
                node *tmp = _root;
                while (tmp && tmp->rightChild)
@@ -125,7 +191,7 @@ namespace ft
                return tmp;
             }
             
-            node* getnullNode( void ) 
+            node* getnullNode( void ) const
             { return _nullnode; }
             
 			   void swap_tree (tree* x)
@@ -390,7 +456,6 @@ namespace ft
             node *new_node = node_allocator.allocate(1);
             if (val)
                new_node->pair = _Myallocator.allocate(1);
-            
             new_node->isblack = false;
             new_node->isleftChild = false;
             new_node->isdoubleBlack = false;
@@ -407,7 +472,7 @@ namespace ft
          void  rightRotation(node* Gp_node)
          {
             node *tmp = Gp_node->leftChild;
-            Gp_node->leftChild = tmp->leftChild;
+            Gp_node->leftChild = tmp->rightChild;
             if (Gp_node->leftChild)
             {
                Gp_node->leftChild->parent = Gp_node;
@@ -429,7 +494,7 @@ namespace ft
             }
             tmp->rightChild = Gp_node;
             Gp_node->isleftChild = false;
-            Gp_node->parent = tmp;         
+            Gp_node->parent = tmp; 
          }
 
          void  leftRotation(node* Gp_node)
@@ -507,7 +572,8 @@ namespace ft
                else
                {
                   _node->parent->parent->rightChild->isblack = true;
-                  _node->parent->parent->isblack = false;
+                  if (_root != _node->parent->parent)
+                     _node->parent->parent->isblack = false;
                   _node->parent->isblack = true;
                   return ;
                }
@@ -517,7 +583,8 @@ namespace ft
                else
                {
                   _node->parent->parent->leftChild->isblack = true;
-                  _node->parent->parent->isblack = false;
+                  if (_root != _node->parent->parent)
+                     _node->parent->parent->isblack = false;
                   _node->parent->isblack = true;
                   return ;
                }
@@ -545,6 +612,7 @@ namespace ft
                   new_node->isleftChild = false;
                   _size++;              
                   checkcolor(new_node);
+                  // std::cout << "key = [ " << current->pair->first << " ] ||| isleftChild = [ " << current->isleftChild << " ] " <<std::endl;
                   return (ft::make_pair(iterator(new_node, this), true));
                }
                return (add_node(current->rightChild, new_node));
@@ -558,6 +626,7 @@ namespace ft
                   new_node->isleftChild = true;
                   _size++;
                   checkcolor(new_node);
+                  // std::cout << "key = [ " << current->pair->first << " ] ||| isleftChild = [ " << current->isleftChild << " ] " <<std::endl;
                   return (ft::make_pair(iterator(new_node, this), true));
                }
                return (add_node(current->leftChild, new_node));
@@ -580,6 +649,7 @@ namespace ft
             }
             _root->isblack = true;
             pair<iterator,bool> it = add_node(_root, create_node(&val));
+            
             _root->isblack = true;
             return it;
          }
