@@ -6,7 +6,7 @@
 /*   By: ibouhiri <ibouhiri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/25 11:05:20 by ibouhiri          #+#    #+#             */
-/*   Updated: 2021/11/15 10:09:21 by ibouhiri         ###   ########.fr       */
+/*   Updated: 2021/11/15 14:21:31 by ibouhiri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -274,8 +274,6 @@ namespace ft
 			{
 				_tree.tree_print();
 			}
-	template <class k, class T, class c, class a>
-	friend bool operator< ( const Map<k,T,c,a>& l, const Map<k,T,c,a>& r );
 	};
 
 	template <class Key, class T, class Compare, class Alloc>

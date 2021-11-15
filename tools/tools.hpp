@@ -6,7 +6,7 @@
 /*   By: ibouhiri <ibouhiri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/11/08 11:02:57 by ibouhiri          #+#    #+#             */
-/*   Updated: 2021/11/15 12:58:40 by ibouhiri         ###   ########.fr       */
+/*   Updated: 2021/11/15 14:20:52 by ibouhiri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,17 @@
 
 namespace ft
 {
+
+	/// enable if /// 
+	
 	template<bool Cond, class T = void>
 	struct enable_if {};
-	
 	template<class T>
 	struct enable_if<true, T> { typedef T type; };
 	
+	////// end enable if /// 
+	
+	///// is intergral // ////// //// 
 	template <bool B>
 	struct ret_type { static const bool value = B; };
 	
@@ -43,7 +48,11 @@ namespace ft
 	template <> struct is_integral<unsigned int> :  true_type {};
 	template <> struct is_integral<unsigned long int> :  true_type {};
 	template <> struct is_integral<unsigned long long int> :  true_type {};
+	///// end is intergral // ////// //// 
 
+	///////// lexicographical_compare //// 
+	
+	/////// custom ////
 	template <class InputIterator1, class InputIterator2, class Compare>
   	bool lexicographical_compare (InputIterator1 first1, InputIterator1 last1, InputIterator2 first2, InputIterator2 last2, Compare comp)
 	{
@@ -56,7 +65,7 @@ namespace ft
     	}
     	return (first1 == last1) && (first2 != last2);
 	}
-	
+	///// default //// 
 	template <class InputIterator1, class InputIterator2>
   	bool lexicographical_compare (InputIterator1 first1, InputIterator1 last1, InputIterator2 first2, InputIterator2 last2)
 	{
@@ -68,7 +77,9 @@ namespace ft
 		}
 		return (first2!=last2);
 	}
+	///////// end lexicographical_compare //// 
 	
+	/// default///
 	template <class InputIterator1, class InputIterator2>
 	bool equal ( InputIterator1 first1, InputIterator1 last1, InputIterator2 first2 )
 	{
@@ -79,6 +90,7 @@ namespace ft
 		}
 		return true;
 	}
+	/////// predicate  /// 
 	template<class InputIt1, class InputIt2, class BinaryPredicate>
 	bool equal(InputIt1 first1, InputIt1 last1, 
 			InputIt2 first2, BinaryPredicate p)
@@ -100,6 +112,9 @@ namespace ft
 			typedef typename iterator::reference		 reference;
 			typedef typename iterator::iterator_category iterator_category;
 	};
+	//////// end equal .///// 
+
+
 	
 	template <class T>
 	class iterator_traits<T*>
@@ -124,6 +139,9 @@ namespace ft
 			typedef std::random_access_iterator_tag          iterator_category;
 	};
 
+
+
+	/////////////////// reverse iterator implementation ///// 
 	template <class Iterator>
 	class reverse_iterator
 	{
