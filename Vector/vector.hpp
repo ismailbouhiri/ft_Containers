@@ -6,7 +6,7 @@
 /*   By: ibouhiri <ibouhiri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/12 11:30:18 by ibouhiri          #+#    #+#             */
-/*   Updated: 2021/11/09 19:56:46 by ibouhiri         ###   ########.fr       */
+/*   Updated: 2021/11/15 12:48:42 by ibouhiri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 
 #include <iostream>
 #include <memory>
-#include <vector>
 # include "random_access_iterators.hpp"
             
 namespace ft
@@ -33,8 +32,8 @@ namespace ft
         typedef typename allocator_type::difference_type     difference_type;
         typedef typename allocator_type::pointer             pointer;               
         typedef typename allocator_type::const_pointer       const_pointer;         
-        typedef ft::iterator<value_type>                     iterator;               
-        typedef ft::iterator<const value_type>               const_iterator;         
+        typedef ft::vector_iterator<value_type>              iterator;               
+        typedef ft::vector_iterator<const value_type>        const_iterator;         
         typedef ft::reverse_iterator<iterator>               reverse_iterator;      
         typedef ft::reverse_iterator<const_iterator>         const_reverse_iterator;            
 
@@ -68,7 +67,7 @@ namespace ft
         };
         template <class InputIterator>
         vector (InputIterator first, InputIterator last,
-        typename std::enable_if<!std::is_integral<InputIterator>::value, InputIterator>::type* t = 0, 
+        typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* t = 0, 
         const allocator_type& alloc = allocator_type()) : _Mysize(0), _MyAllocator(alloc)
         {
             t = 0;
@@ -216,7 +215,7 @@ namespace ft
         // // modifiers
         template <class InputIterator>
         void assign (InputIterator first, InputIterator last,
-        typename std::enable_if<!std::is_integral<InputIterator>::value, InputIterator>::type* t = 0)
+        typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* t = 0)
         {
             t = 0;
             this->_MyAllocator.deallocate(this->_array, this->_MyCapacity);
@@ -398,7 +397,7 @@ namespace ft
         
         template <class InputIterator>
         void insert (iterator position, InputIterator first, InputIterator last,
-                typename std::enable_if<!std::is_integral<InputIterator>::value, InputIterator>::type* t = 0)
+                typename ft::enable_if<!ft::is_integral<InputIterator>::value, InputIterator>::type* t = 0)
         {
             t = 0;
             size_type n = std::distance(first, last);
@@ -535,18 +534,8 @@ namespace ft
     
     // non-member fonctions
     template <class T, class Alloc>
-    bool operator== (const vector<T,Alloc>& left, const vector<T,Alloc>& right)  {
-        size_t left_size = left.size();
-        size_t right_size = right.size();
-        if (left_size == right_size)
-        {
-            for (size_t i = 0; i < left_size; i++)
-                if (left[i] != right[i])
-                    return false;
-            return true;   
-        }
-        return false;
-    };
+    bool operator== (const vector<T,Alloc>& left, const vector<T,Alloc>& right)
+    { return left.size() == right.size() && (ft::equal(left.begin(), left.end(), right.begin())); };
 	
     template <class T, class Alloc>
 	bool operator!=(const vector<T,Alloc>& left, const vector<T,Alloc>& right) { return !(left == right); }
@@ -554,16 +543,7 @@ namespace ft
     template <class T, class Alloc>
 	bool operator<(const vector<T,Alloc>& left, const vector<T,Alloc>& right)
 	{
-        size_t left_size = left.size();
-        size_t right_size = right.size();
-        for (size_t i = 0; i < right_size && i < left_size; i++)
-            if (left[i] < right[i])
-                return true;
-            else if (left[i] > right[i])
-                return false;
-        if (left_size >= right_size)
-            return false;
-        return true;
+        return (ft::lexicographical_compare(left.begin(), left.end(), right.begin(), right.end()));
     }
 	
     template <class T, class Alloc>

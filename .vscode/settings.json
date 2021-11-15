@@ -67,7 +67,12 @@
         "__tree": "cpp",
         "map": "cpp",
         "__memory": "cpp",
-        "__functional_base_03": "cpp"
+        "__functional_base_03": "cpp",
+        "deque": "cpp",
+        "numeric": "cpp",
+        "random": "cpp",
+        "set": "cpp",
+        "stack": "cpp"
     },
     "C_Cpp.errorSquiggles": "Disabled"
 }

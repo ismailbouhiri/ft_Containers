@@ -6,16 +6,27 @@
 /*   By: ibouhiri <ibouhiri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/25 11:05:20 by ibouhiri          #+#    #+#             */
-/*   Updated: 2021/11/13 18:46:15 by ibouhiri         ###   ########.fr       */
+/*   Updated: 2021/11/15 10:09:21 by ibouhiri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MAP_HPP
 #define MAP_HPP
 
+#include "../Vector/vector.hpp"
 # include "Bidirectional_iterator.hpp"
 # include "tree.hpp"
 # include "../tools/tools.hpp"
+#include <iostream>
+#include <iterator>
+#include <utility>
+#include <ctime>
+#include <iomanip>
+#include <unistd.h>
+#include <signal.h>
+#include <sys/time.h>
+#include <random>
+
 
 namespace ft 
 {
@@ -73,7 +84,9 @@ namespace ft
 			Map (InputIterator first, InputIterator last, const key_compare& comp = key_compare(), const allocator_type& alloc = allocator_type()) : _compare(comp), _allocator(alloc)
 			{
 				for (;first != last; first++)
+				{
 					_tree.insert(*first);
+				}
 			}
 			
 			Map (const Map& x)
@@ -166,16 +179,26 @@ namespace ft
 
 			size_type erase (const key_type& k)
 			{
-				return (_tree.deleteNode(k));
+				size_type s = _tree.getSize();
+				_tree.deleteNode(k);
+				return s - _tree.getSize();
+				
 			}
 
 			void erase (iterator first, iterator last)
 			{
-				while (first != last)
+				if (_tree.getSize() > 0)
 				{
-					_tree.deleteNode(first->first);
-					first++;
+					ft::vector<key_type> keys;			
+					for (; first != last; first++)
+					{
+						keys.push_back(first->first);
+					}
+					
+					for (size_type i = 0; i < keys.size(); i++)
+						_tree.deleteNode(keys[i]);
 				}
+				
 			}
 			
 			void swap (Map& x)
@@ -201,10 +224,20 @@ namespace ft
 			///////////////////// Operations: /////////////////
 
 			iterator find (const key_type& k) 
-			{ return iterator(_tree.search(k), &_tree); }
+			{
+				node *ret = _tree.search(k);
+				if (ret)
+					return iterator(ret, const_cast<tree_type*>(&_tree));
+				return iterator(_tree.getnullNode(), const_cast<tree_type*>(&_tree)); 
+			}
 
 			const_iterator find (const key_type& k) const
-			{ return const_iterator(_tree.search(k), const_cast<tree_type*>(&_tree)); }
+			{
+				node *ret = _tree.search(k);
+				if (ret)
+					return const_iterator(ret, const_cast<tree_type*>(&_tree));
+				return const_iterator(_tree.getnullNode(), const_cast<tree_type*>(&_tree)); 
+			}
 
 			size_type count (const key_type& k) const
 			{
@@ -241,6 +274,8 @@ namespace ft
 			{
 				_tree.tree_print();
 			}
+	template <class k, class T, class c, class a>
+	friend bool operator< ( const Map<k,T,c,a>& l, const Map<k,T,c,a>& r );
 	};
 
 	template <class Key, class T, class Compare, class Alloc>
@@ -249,7 +284,7 @@ namespace ft
 	
 	template <class Key, class T, class Compare, class Alloc>
 	bool operator!= ( const Map<Key,T,Compare,Alloc>& lhs, const Map<Key,T,Compare,Alloc>& rhs )
-	{ return ! ( lhs == rhs ); }
+	{ return !( lhs == rhs ); }
 	
 	template <class Key, class T, class Compare, class Alloc>
 	bool operator< ( const Map<Key,T,Compare,Alloc>& lhs, const Map<Key,T,Compare,Alloc>& rhs )
@@ -257,11 +292,11 @@ namespace ft
 	
 	template <class Key, class T, class Compare, class Alloc>
 	bool operator<= ( const Map<Key,T,Compare,Alloc>& lhs, const Map<Key,T,Compare,Alloc>& rhs )
-	{ return !( lhs > rhs ); }
+	{ return !( rhs < lhs ); }
 	
 	template <class Key, class T, class Compare, class Alloc>
 	bool operator>  ( const Map<Key,T,Compare,Alloc>& lhs, const Map<Key,T,Compare,Alloc>& rhs )
-	{ return !( rhs < lhs ); }
+	{ return (rhs < lhs); }
 	
 	template <class Key, class T, class Compare, class Alloc>
 	bool operator>= ( const Map<Key,T,Compare,Alloc>& lhs, const Map<Key,T,Compare,Alloc>& rhs )

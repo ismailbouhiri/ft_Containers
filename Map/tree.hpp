@@ -6,7 +6,7 @@
 /*   By: ibouhiri <ibouhiri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 19:59:14 by ibouhiri          #+#    #+#             */
-/*   Updated: 2021/11/13 18:18:55 by ibouhiri         ###   ########.fr       */
+/*   Updated: 2021/11/15 09:29:33 by ibouhiri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ namespace ft
          ~tree(void)
          {
             if (_nullnode)
-               free_node(_nullnode);
+               free_node(&_nullnode);
             _nullnode = NULL;
             if (_root)
                ClearRoot(_root);
@@ -108,6 +108,7 @@ namespace ft
          {
             node *tmp = _root;
             node *search_n = search(k);
+            node *pre;
             if (search_n && search_n != _nullnode)
                return ( search_n );
             while (tmp)
@@ -116,49 +117,67 @@ namespace ft
                {
                   if (tmp->rightChild)
                      tmp = tmp->rightChild;
-                  else
-                     return tmp->parent;
-                  continue ;
-               }
-               else if (_value_compare(k, tmp->pair->first))
-               {
-                  if (tmp->leftChild)
-                     tmp = tmp->leftChild;
-                  else
-                     return tmp;
                   continue;
                }
+               pre = getNodeInOrderPredecessor(tmp); 
+               if (_value_compare(k, pre->pair->first))
+                  return pre;
+               return tmp;
             }
-            return tmp;
+            return NULL;
          }
 
          node *upper(const key_type& k) const 
          {
             node *tmp = _root;
             node *last = getlast();
+            node *succ;
+            node *search_n = search(k);
+            node *pre;
             while (tmp)
             {
-               if (tmp->pair->first == k && tmp == last)
-                  return (_nullnode);
-               else if (tmp->pair->first != k && !tmp->rightChild && !tmp->leftChild)
-                  return tmp;
-               else if (_value_compare(tmp->pair->first, k))
+               if (tmp == last)
+                  break;
+               if (_value_compare(tmp->pair->first, k))
                {
-                  tmp = tmp->rightChild;
-                  continue;
-               }
-               else if (_value_compare(k, tmp->pair->first))
-               {
-                  tmp = tmp->leftChild;
-                  continue;
-               }
-               else
                   if (tmp->rightChild)
+                  {
                      tmp = tmp->rightChild;
-                  else
-                     return (tmp->parent);
+                     continue;  
+                  }
+               }
+               if (tmp == _root && search_n && _value_compare(k, search_n->parent->pair->first))
+               {
+                  succ = getNodeInOrderSuccessor(search_n);
+                  if (succ)
+                     return succ;
+                  return search_n->parent;
+               }
+               pre = getNodeInOrderPredecessor(tmp); 
+               if (_value_compare(k, pre->pair->first))
+                  return pre;
+               else if (_value_compare(k, tmp->pair->first))
+                  return tmp;
+               return tmp->rightChild;
+               // else if (tmp->pair->first != k && !tmp->rightChild && !tmp->leftChild)
+               //    return tmp;
+               // else if (_value_compare(tmp->pair->first, k))
+               // {
+               //    tmp = tmp->rightChild;
+               //    continue;
+               // }
+               // else if (_value_compare(k, tmp->pair->first))
+               // {
+               //    tmp = tmp->leftChild;
+               //    continue;
+               // }
+               // else
+               //    if (tmp->rightChild)
+               //       tmp = tmp->rightChild;
+               //    else
+               //       return (tmp->parent);
             }
-            return (tmp);    
+            return (_nullnode);    
          }
          
          /////////////////////////////////// getters and sitters //////////////////////////////////
@@ -216,29 +235,29 @@ namespace ft
 
          /////////////////////////////////// clear tree method ///////////////////////////////////
          
-         void  free_node( node* del_n )
+         void  free_node( node** del_n )
          {
-            if (del_n == _root)
+            if (del_n[0] == _root)
                _root = NULL;
-            node *p = del_n->parent;
-            if (del_n->pair)
+            node *p = del_n[0]->parent;
+            if (del_n[0]->pair)
             {
-               _Myallocator.destroy(del_n->pair);
-               _Myallocator.deallocate(del_n->pair, 1);
+               _Myallocator.destroy(del_n[0]->pair);
+               _Myallocator.deallocate(del_n[0]->pair, 1);
             }
-            if (p && del_n && p->leftChild && del_n->isleftChild)
+            if (p && del_n[0] && p->leftChild && del_n[0]->isleftChild)
                p->leftChild = NULL;
-            else if (p && del_n && p->rightChild && !del_n->isleftChild)
+            else if (p && del_n[0] && p->rightChild && !del_n[0]->isleftChild)
                p->rightChild = NULL;
-            if (del_n)
+            if (del_n[0])
             {
-               del_n->pair = NULL;
-               del_n->parent = NULL;
-               del_n->rightChild = NULL;
-               del_n->leftChild = NULL;
-               node_allocator.deallocate(del_n, 1);
+               del_n[0]->pair = NULL;
+               del_n[0]->parent = NULL;
+               del_n[0]->rightChild = NULL;
+               del_n[0]->leftChild = NULL;
+               node_allocator.deallocate(del_n[0], 1);
             }
-            del_n = NULL;
+            del_n[0] = NULL;
          }
          
          void ClearRoot( node* del_n )
@@ -248,7 +267,7 @@ namespace ft
                
             ClearRoot(del_n->leftChild);
             ClearRoot(del_n->rightChild);
-            free_node(del_n);
+            free_node(&del_n);
          }
 
          ///////////////////////////////////clear tree method end /////////////////////////////////////
@@ -287,7 +306,7 @@ namespace ft
          }
 
          
-         node*    getNodeInOrderSuccessor( node* _n)
+         node*    getNodeInOrderSuccessor( node* _n) const 
          {
             node  *tmp;
             if (!_n->rightChild)
@@ -298,7 +317,7 @@ namespace ft
             return tmp;
          }
 
-         node*    getNodeInOrderPredecessor(const node* _n)
+         node*    getNodeInOrderPredecessor(const node* _n) const 
          {
             node  *tmp;
             if (!_n->leftChild)
@@ -420,9 +439,8 @@ namespace ft
             {
                del_node = getLeaf(del_node); // get leaf
                del_node->isdoubleBlack = ( del_node->isblack ) ? true : false; // if node is black it became double black
-               node *save = del_node;
                delete_helper(del_node);
-               free_node(save);
+               free_node(&del_node);
                _size--;
             }
             return ( _size );
@@ -476,7 +494,7 @@ namespace ft
             if (Gp_node->leftChild)
             {
                Gp_node->leftChild->parent = Gp_node;
-               Gp_node->leftChild->isleftChild = false;
+               Gp_node->leftChild->isleftChild = true;
             }
             if (Gp_node->parent == NULL) {
                _root = tmp;

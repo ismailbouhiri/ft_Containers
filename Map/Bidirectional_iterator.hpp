@@ -6,7 +6,7 @@
 /*   By: ibouhiri <ibouhiri@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/26 09:43:39 by ibouhiri          #+#    #+#             */
-/*   Updated: 2021/11/13 18:45:10 by ibouhiri         ###   ########.fr       */
+/*   Updated: 2021/11/15 10:05:53 by ibouhiri         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,28 +46,31 @@ namespace ft
 	
 	template <class T1, class T2>
 	bool operator== (const pair<T1,T2>& lhs, const pair<T1,T2>& rhs)
-	{
-		return (lhs.first == rhs.first && lhs.second == rhs.second);
-	};
+	{ return lhs.first==rhs.first && lhs.second==rhs.second; }
 
 	template <class T1, class T2>
 	bool operator!= (const pair<T1,T2>& lhs, const pair<T1,T2>& rhs)
-	{ return !(lhs == rhs); };
+	{ return !(lhs==rhs); }
 
 	template <class T1, class T2>
 	bool operator<  (const pair<T1,T2>& lhs, const pair<T1,T2>& rhs)
-	{ return (lhs.first < rhs.first && lhs.second < rhs.second); };
-	
+	{ return lhs.first<rhs.first || (!(rhs.first<lhs.first) && lhs.second<rhs.second); }
+
 	template <class T1, class T2>
 	bool operator<= (const pair<T1,T2>& lhs, const pair<T1,T2>& rhs)
-	{ return ( lhs == rhs || lhs < rhs ); };
+	{ return !(rhs<lhs); }
+
 	template <class T1, class T2>
 	bool operator>  (const pair<T1,T2>& lhs, const pair<T1,T2>& rhs)
-	{ return !(lhs <= rhs); };
+	{ return rhs<lhs; }
+
 	template <class T1, class T2>
 	bool operator>= (const pair<T1,T2>& lhs, const pair<T1,T2>& rhs)
-	{ return !(lhs < rhs); };
+	{ return !(lhs<rhs); }
 	
+
+
+
 	
 	template < class node, class tree_type, class pair>
 	class map_iterator : public std::iterator<std::bidirectional_iterator_tag, pair>
@@ -100,131 +103,104 @@ namespace ft
 			pair&	operator*(void) const { return *(iter->pair); };
 			pair*	operator->(void) const { return iter->pair; };
 			
-			map_iterator	&operator ++()
+
+			map_iterator 	&operator++(void)
 			{
 				if (iter == _tree->getlast())
-				{
 					iter = _tree->getnullNode();
-				}
 				else if (!iter->parent)
 				{
-					if (!iter->rightChild) iter = iter->parent;
-					else iter = _tree->getNodeInOrderSuccessor(iter);
+					if (!iter->rightChild)
+						iter = iter->parent;
+					else
+						iter = _tree->getNodeInOrderSuccessor(iter);
 				}
-				else if (iter == iter->parent->leftChild && !iter->rightChild)
+				else if (iter->parent && iter->isleftChild && !iter->rightChild)
 					iter = iter->parent;
 				else if (iter->rightChild)
 					iter = _tree->getNodeInOrderSuccessor(iter);
-				else
+				else if (!iter->isleftChild && !iter->leftChild && !iter->rightChild)
 				{
-					node *x = iter;
-					while (x->parent && x == x->parent->rightChild)
-						x = x->parent;
-					iter = x->parent;
+					while (!iter->isleftChild)
+						iter = iter->parent;
+					iter = iter->parent;
 				}
 				return *this;
-			}
-			map_iterator	operator ++(int) { map_iterator tmp = *this; ++(*this); return tmp; }
-			map_iterator	&operator --(void)
+			};
+			
+			map_iterator	operator++(int)
 			{
-				if (iter == _tree->getnullNode())
-				{
-					iter = _tree->getlast();
-				}
+				map_iterator old(*this);
+				if (iter == _tree->getlast())
+					iter = _tree->getnullNode();
 				else if (!iter->parent)
 				{
-					if (!iter->leftChild) 
+					if (!iter->rightChild)
+						iter = iter->parent;
+					else
+						iter = _tree->getNodeInOrderSuccessor(iter);
+				}
+				else if (iter->parent && iter->isleftChild && !iter->rightChild)
+					iter = iter->parent;
+				else if (iter->rightChild)
+					iter = _tree->getNodeInOrderSuccessor(iter);
+				else if (!iter->isleftChild && !iter->rightChild)
+				{
+					while (!iter->isleftChild)
+						iter = iter->parent;
+					iter = iter->parent;
+				}
+				return old;
+			};
+			
+			map_iterator 	&operator--(void)
+			{
+				if (iter == _tree->getnullNode())
+					iter = _tree->getlast();
+				else if (!iter->parent)
+				{
+					if (!iter->leftChild)
 						iter = iter->parent;
 					else
 						iter = _tree->getNodeInOrderPredecessor(iter);
 				}
-				else if (iter == iter->parent->rightChild && !iter->leftChild)
+				else if (!iter->isleftChild && !iter->leftChild)
 					iter = iter->parent;
 				else if (iter->leftChild)
 					iter = _tree->getNodeInOrderPredecessor(iter);
-				else
+				else if (iter->isleftChild && !iter->leftChild && !iter->rightChild)
 				{
-					node *x = iter;
-					while (x->parent && x == x->parent->leftChild)
-						x = x->parent;
-					iter = x->parent;
+					while (iter->isleftChild)
+						iter = iter->parent;
+					iter = iter->parent;
 				}
 				return *this;
-			}
-			map_iterator	operator --(int) { map_iterator tmp = *this; --(*this); return tmp; }
-
-			// map_iterator	operator++(int)
-			// {
-			// 	map_iterator old(*this);
-			// 	if (iter == _tree->getlast())
-			// 		iter = _tree->getnullNode();
-			// 	else if (iter->isleftChild && !iter->leftChild && !iter->rightChild)
-			// 		iter = iter->parent;
-			// 	else if (iter->rightChild)
-			// 		iter = _tree->getNodeInOrderSuccessor(iter);
-			// 	else if (!iter->isleftChild && !iter->leftChild && !iter->rightChild)
-			// 	{
-			// 		while (!iter->isleftChild)
-			// 			iter = iter->parent;
-			// 		iter = iter->parent;
-			// 	}
-			// 	return old;
-			// };
-
-			// map_iterator 	&operator++(void)
-			// {
-			// 	if (iter == _tree->getlast())
-			// 		iter = _tree->getnullNode();
-			// 	else if (iter->isleftChild && !iter->leftChild && !iter->rightChild)
-			// 		iter = iter->parent;
-			// 	else if (iter->rightChild)
-			// 		iter = _tree->getNodeInOrderSuccessor(iter);
-			// 	else if (!iter->isleftChild && !iter->leftChild && !iter->rightChild)
-			// 	{
-			// 		while (!iter->isleftChild)
-			// 			iter = iter->parent;
-			// 		iter = iter->parent;
-			// 	}
-			// 	return *this;
-			// };
-			// map_iterator 	operator--(int)
-			// {
-			// 	map_iterator old(*this);
-			// 	if (iter == _tree->getnullNode())
-			// 		iter = _tree->getlast();
-			// 	else if (iter->leftChild)
-			// 		iter = _tree->getNodeInOrderPredecessor(iter);
-			// 	else if (!iter->isleftChild)
-			// 		iter = iter->parent;
-			// 	else if (iter->isleftChild && !iter->leftChild && !iter->rightChild)
-			// 	{
-			// 		while (iter->isleftChild)
-			// 			iter = iter->parent;
-			// 		iter = iter->parent;
-			// 	}
-			// 	else
-			// 		iter = iter->leftChild;
-			// 	return old; 
-			// };
-
-			// map_iterator 	&operator--(void)
-			// {
-			// 	if (iter == _tree->getnullNode())
-			// 		iter = _tree->getlast();
-			// 	else if (iter->leftChild)
-			// 		iter = _tree->getNodeInOrderPredecessor(iter);
-			// 	else if (!iter->isleftChild)
-			// 		iter = iter->parent;
-			// 	else if (iter->isleftChild && !iter->leftChild && !iter->rightChild)
-			// 	{
-			// 		iter = iter->parent;
-			// 		while (iter->parent && !iter->isleftChild)
-			// 			iter = iter->parent;
-			// 	}
-			// 	else
-			// 		iter = iter->leftChild;
-			// 	return *this;
-			// };
+			};
+			
+			map_iterator 	operator--(int)
+			{
+				map_iterator old(*this);
+				if (iter == _tree->getnullNode())
+					iter = _tree->getlast();
+				else if (!iter->parent)
+				{
+					if (!iter->leftChild)
+						iter = iter->parent;
+					else
+						iter = _tree->getNodeInOrderPredecessor(iter);
+				}
+				else if (!iter->isleftChild && !iter->leftChild)
+					iter = iter->parent;
+				else if (iter->leftChild)
+					iter = _tree->getNodeInOrderPredecessor(iter);
+				else if (iter->isleftChild && !iter->leftChild && !iter->rightChild)
+				{
+					while (iter->isleftChild)
+						iter = iter->parent;
+					iter = iter->parent;
+				}
+				return old; 
+			};
 	};
 	template <class N1, class T1, class P1, class N2, class T2, class P2>
 	bool	operator ==(const map_iterator<N1,T1,P1> &x, const map_iterator<N2,T2,P2> &y) { return x.iter == y.iter; }

@@ -16,4 +16,4 @@ FLAGS = --std=c++98 -Wall -Wextra -Werror -fsanitize=address -g3
 map:
 	@$(COMPILER) $(FLAGS)	Map_tests.cpp -o map.out 
 clean:
-	rm -f map.out
+	@rm -rf map.out map.out.dSYM a.out a.out.dSYM
